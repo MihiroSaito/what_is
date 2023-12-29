@@ -86,7 +86,7 @@ class Home extends HookConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(initText: initText),
+            AppHeader(initText: initText, safeAreaPaddingTop: safeAreaPadding.top,),
             if (initText != null || newWord != null) //
               Expanded(
                 child: Navigator(

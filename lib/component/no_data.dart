@@ -53,7 +53,7 @@ class NoData extends HookConsumerWidget {
               ),
             ),
             ...section2(context),
-            SizedBox(height: MediaQuery.of(context).padding.bottom + 24.0,)
+            SizedBox(height: MediaQuery.of(context).padding.bottom + 40.0,)
           ],
         ),
       ),
@@ -91,7 +91,7 @@ class NoData extends HookConsumerWidget {
   List<Widget> section2(BuildContext context) {
     return [
       Padding(
-        padding: const EdgeInsets.only(left: 24.0, right: 0, top: 24.0),
+        padding: const EdgeInsets.all(24.0),
         child: Text(
           '2. アプリを開く。',
           style: TextStyle(
@@ -105,7 +105,7 @@ class NoData extends HookConsumerWidget {
       ),
       Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.5,
+          width: MediaQuery.of(context).size.width * 0.65,
           child: AppTheme.isDarkMode()
               ? Image.asset('assets/images/explain_tap_icon_dark.png')
               : Image.asset('assets/images/explain_tap_icon.png'),

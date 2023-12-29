@@ -15,18 +15,18 @@ WebUri createUrl(String text) {
 }
 
 
-FlashController<Object?>? flashController;
+FlashController<Object?>? _flashController;
 
 Future<void> showSearchAgainToast(BuildContext context, WidgetRef ref, {required EdgeInsets safeAreaPadding}) async {
   final String? text = await getClipboardText(); // 現在のクリップボードにあるワードを取得
   if (text == null) return;
-  if (!(flashController?.controller.isCompleted ?? true)) return;
+  if (!(_flashController?.controller.isCompleted ?? true)) return;
   await context.showFlash(
       transitionDuration: const Duration(milliseconds: 500),
       duration: const Duration(milliseconds: 5500),
       builder: (_, controller) {
 
-        flashController = controller;
+        _flashController = controller;
 
         return FlashBar(
           controller: controller,
@@ -51,12 +51,12 @@ Future<void> showSearchAgainToast(BuildContext context, WidgetRef ref, {required
                     safeAreaPadding: safeAreaPadding,
                   ))
               );
-              flashController?.dismiss();
+              _flashController?.dismiss();
             },
           ),
         );
       }
-  ).then((value) => flashController = null);
+  ).then((value) => _flashController = null);
   await HapticFeedback.heavyImpact();
   await Future.delayed(const Duration(milliseconds: 100));
   await HapticFeedback.heavyImpact();

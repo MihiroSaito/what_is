@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 
-class AppFadeAnimate extends StatefulWidget {
-  const AppFadeAnimate({
+enum AppAnimationType {
+  fadeIn,
+  scale
+}
+
+class AppAnimation extends StatefulWidget {
+  const AppAnimation.fadeIn({
     required this.child,
     this.duration = const Duration(milliseconds: 200),
     this.curve = Curves.easeIn,
-  Key? key}) : super(key: key);
+    Key? key}): type = AppAnimationType.fadeIn, super(key: key, );
+
+  const AppAnimation.scale({
+    required this.child,
+    this.duration = const Duration(milliseconds: 300),
+    this.curve = Curves.easeOutBack,
+    Key? key}): type = AppAnimationType.scale, super(key: key);
 
   final Widget child;
+  final AppAnimationType type;
   final Duration duration;
   final Curve curve;
 
   @override
-  State<AppFadeAnimate> createState() => _AppFadeAnimateState();
+  State<AppAnimation> createState() => _AppAnimationState();
 }
 
-class _AppFadeAnimateState extends State<AppFadeAnimate> with SingleTickerProviderStateMixin {
+class _AppAnimationState extends State<AppAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -42,9 +54,16 @@ class _AppFadeAnimateState extends State<AppFadeAnimate> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animation, // フェードインアニメーションを適用するアニメーションオブジェクト
-      child: widget.child,
-    );
+    if (widget.type == AppAnimationType.fadeIn) {
+      return FadeTransition(
+        opacity: _animation, // フェードインアニメーションを適用するアニメーションオブジェクト
+        child: widget.child,
+      );
+    } else {
+      return ScaleTransition(
+        scale: _animation, // スケールアニメーションを適用するアニメーションオブジェクト
+        child: widget.child,
+      );
+    }
   }
 }

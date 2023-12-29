@@ -9,11 +9,13 @@ class SquishyButton extends StatefulWidget {
     required this.onTap,
     required this.child,
     required this.disableWidget,
+    this.padding = const EdgeInsets.all(8.0)
   }) : super(key: key);
 
   final Function? onTap;
   final Widget child;
   final Widget disableWidget;
+  final EdgeInsets padding;
 
   @override
   State<SquishyButton> createState() => _SquishyButtonState();
@@ -51,7 +53,7 @@ class _SquishyButtonState extends State<SquishyButton> {
               curve: Curves.easeInOut,
               duration: const Duration(milliseconds: 100),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: widget.padding,
                 child: widget.child,
               )
           ),

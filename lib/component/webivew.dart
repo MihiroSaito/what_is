@@ -142,54 +142,58 @@ class WebViewBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: height,
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Row(
-                  children: [
-                    SquishyButton(
-                      onTap: () => onGoBack(),
-                      child: activeButton(context, iconData: CupertinoIcons.arrow_left, enableBG: false),
-                      disableWidget: disableButton(context, iconData: CupertinoIcons.arrow_left),
-                    ),
-                    const Spacer(),
-                    SquishyButton(
-                      onTap: () => onGoForward(),
-                      child: activeButton(context, iconData: CupertinoIcons.arrow_right, enableBG: false),
-                      disableWidget: disableButton(context, iconData: CupertinoIcons.arrow_right),
-                    ),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      SquishyButton(
+                        onTap: () => onGoBack(),
+                        child: activeButton(context, iconData: CupertinoIcons.arrow_left, enableBG: false),
+                        disableWidget: disableButton(context, iconData: CupertinoIcons.arrow_left),
+                      ),
+                      const Spacer(),
+                      SquishyButton(
+                        onTap: () => onGoForward(),
+                        child: activeButton(context, iconData: CupertinoIcons.arrow_right, enableBG: false),
+                        disableWidget: disableButton(context, iconData: CupertinoIcons.arrow_right),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 5,
-                child: Row(
-                  children: [
-                    const Spacer(),
-                    SquishyButton(
-                      onTap: () => onShare(),
-                      child: activeButton(context,
-                          iconData: Platform.isIOS
-                              ? CupertinoIcons.square_arrow_up
-                              : Icons.share,
-                          enableBG: false),
-                      disableWidget: disableButton(context, iconData: CupertinoIcons.square_arrow_up),
-                    ),
-                    const Spacer(),
-                    SquishyButton(
-                      onTap: () => onReload(),
-                      child: activeButton(context, iconData: CupertinoIcons.arrow_clockwise),
-                      disableWidget: disableButton(context, iconData: CupertinoIcons.arrow_clockwise),
-                    ),
-                  ],
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    children: [
+                      const Spacer(),
+                      SquishyButton(
+                        onTap: () => onShare(),
+                        child: activeButton(context,
+                            iconData: Platform.isIOS
+                                ? CupertinoIcons.square_arrow_up
+                                : Icons.share,
+                            enableBG: false),
+                        disableWidget: disableButton(context, iconData: CupertinoIcons.square_arrow_up),
+                      ),
+                      const Spacer(),
+                      SquishyButton(
+                        onTap: () => onReload(),
+                        padding: EdgeInsets.zero,
+                        child: activeButton(context, iconData: CupertinoIcons.arrow_clockwise),
+                        disableWidget: disableButton(context, iconData: CupertinoIcons.arrow_clockwise),
+                      ),
+                      const SizedBox(width: 8.0,),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         Positioned(
@@ -207,7 +211,7 @@ class WebViewBottomBar extends StatelessWidget {
             top: 0,
             right: 0,
             left: 0,
-            child: AppFadeAnimate(
+            child: AppAnimation.fadeIn(
               child: Container(
                 height: 2.5,
                 color: Theme.of(context).scaffoldBackgroundColor,
@@ -224,7 +228,7 @@ class WebViewBottomBar extends StatelessWidget {
           shape: BoxShape.circle,
           color: enableBG? Colors.blueGrey.withOpacity(0.15) : null
       ),
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(enableBG? 8.0 : 0.0),
       child: Icon(
         iconData,
         size: 28.0,
