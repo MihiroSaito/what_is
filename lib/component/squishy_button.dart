@@ -50,7 +50,10 @@ class _SquishyButtonState extends State<SquishyButton> {
               scale: isTap? 0.9 : 1.0,
               curve: Curves.easeInOut,
               duration: const Duration(milliseconds: 100),
-              child: widget.child
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: widget.child,
+              )
           ),
         )
     );

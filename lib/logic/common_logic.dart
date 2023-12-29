@@ -3,6 +3,9 @@ import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:what_is/logic/notifier.dart';
+import 'package:what_is/logic/word_history.dart';
 
 import '../component/search_again_toast_widget.dart';
 import '../component/webivew.dart';
@@ -12,14 +15,19 @@ WebUri createUrl(String text) {
 }
 
 
+FlashController<Object?>? flashController;
 
-Future<void> showSearchAgainToast(BuildContext context) async {
+Future<void> showSearchAgainToast(BuildContext context, WidgetRef ref, {required EdgeInsets safeAreaPadding}) async {
   final String? text = await getClipboardText(); // 現在のクリップボードにあるワードを取得
   if (text == null) return;
+  if (!(flashController?.controller.isCompleted ?? true)) return;
   await context.showFlash(
       transitionDuration: const Duration(milliseconds: 500),
       duration: const Duration(milliseconds: 5500),
-      builder: (context, controller) {
+      builder: (_, controller) {
+
+        flashController = controller;
+
         return FlashBar(
           controller: controller,
           behavior: FlashBehavior.floating,
@@ -31,12 +39,26 @@ Future<void> showSearchAgainToast(BuildContext context) async {
           padding: EdgeInsets.zero,
           forwardAnimationCurve: Curves.elasticOut,
           margin: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: WebViewBottomBar.height + 16.0,),
-          content: SearchAgainToastWidget(word: text,),
+          content: SearchAgainToastWidget(
+            word: text,
+            safeAreaPadding: safeAreaPadding,
+            onTap: () {
+              ref.read(webViewPagesProvider.notifier).state = [];
+              ref.read(wordHistoryProvider.notifier).clearAndAdd(WordHistory(word: text, url: createUrl(text).toString()));
+              Navigator.pushReplacement(context, MaterialPageRoute(
+                  builder: (__) => AppWebViewPages(
+                    firstPageWord: text,
+                    safeAreaPadding: safeAreaPadding,
+                  ))
+              );
+              flashController?.dismiss();
+            },
+          ),
         );
       }
-  );
+  ).then((value) => flashController = null);
   await HapticFeedback.heavyImpact();
-  await Future.delayed(const Duration(milliseconds: 500));
+  await Future.delayed(const Duration(milliseconds: 100));
   await HapticFeedback.heavyImpact();
 }
 

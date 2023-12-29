@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:what_is/component/webivew.dart';
 import 'package:what_is/logic/word_history.dart';
 
+import 'common_logic.dart';
 
-class WordHistoryNotifier extends Notifier<List<WordHistory>> {
+
+class WordHistoryNotifier extends AutoDisposeNotifier<List<WordHistory>> {
   @override
   List<WordHistory> build() {
     return [];
@@ -13,16 +17,20 @@ class WordHistoryNotifier extends Notifier<List<WordHistory>> {
   void add(WordHistory wordHistory) {
     state = state = [...state, wordHistory];
   }
+
+  void clear() => state = [];
+
+  void clearAndAdd(WordHistory wordHistory) => state = [wordHistory];
 }
 
-final wordHistoryProvider = NotifierProvider<WordHistoryNotifier, List<WordHistory>>(() {
+final wordHistoryProvider = NotifierProvider.autoDispose<WordHistoryNotifier, List<WordHistory>>(() {
   return WordHistoryNotifier();
 });
 
 
 
 
-final newWordFromOutsideProvider = StateProvider<String?>((ref) => null);
+final newWordFromOutsideProvider = StateProvider.autoDispose<String?>((ref) => null);
 
 
 
@@ -48,32 +56,43 @@ class _AppLifecycleObserver extends WidgetsBindingObserver {
   }
 }
 
-// class _AppLifecycleObserver extends WidgetsBindingObserver {
-//   _AppLifecycleObserver(this.ref);
-//   final ProviderRef ref;
-//
-//   @override
-//   void didChangeAppLifecycleState(AppLifecycleState state) {
-//     final firstWord = ref.watch(wordHistoryProvider).firstOrNull; // 最初に検索したワードを取得
-//
-//     final latestState = ref.watch(latestAppLifeCycleStateProvider); // 最新のアプリの状態を取得（バックグラウンド？フォアグラウンド？etc..）
-//     ref.read(latestAppLifeCycleStateProvider.notifier).state = state; // 最新のアプリの状態を更新
-//     if (latestState == null) return; // 最新のアプリの状態がない = 初回起動の場合は以降の処理をスキップ
-//
-//     if(state == AppLifecycleState.resumed){
-//       if (firstWord == null) return;
-//       Future(() async {
-//         final data = await Clipboard.getData(Clipboard.kTextPlain);
-//         final String? text = data?.text; // 現在のクリップボードにあるワードを取得
-//         ref.watch(newWordFromOutsideProvider.notifier).state = text; // 取得した2つのワードが別のものだったらフラグを立てる
-//       });
-//     }
-//
-//     super.didChangeAppLifecycleState(state);
-//   }
-// }
-
 
 
 final latestAppLifeCycleStateProvider = StateProvider<AppLifecycleState?>((ref) => null);
+
+
+final currentWebViewControllerProvider = StateProvider.autoDispose<InAppWebViewController?>((ref) => null);
+
+final isLoadingCurrentWebViewProvider = StateProvider.autoDispose<bool>((ref) => true);
+
+final webViewPagesProvider = StateProvider.autoDispose<List<AppWebView>>((ref) => []);
+
+final webViewPagesPageControllerProvider = StateProvider.autoDispose<PageController>((ref) => PageController());
+
+
+final contextMenuProvider = StateProvider.autoDispose.family<ContextMenu, EdgeInsets>((ref, safeAreaPadding) {
+  return ContextMenu(
+    menuItems: [
+      ContextMenuItem(id: 1, title: "さらに検索", action: () async {
+        final selectedText = await ref.watch(currentWebViewControllerProvider)?.getSelectedText();
+        if (selectedText != null) {
+          final pageUrl = createUrl(selectedText);
+          final webViewPages = ref.watch(webViewPagesProvider);
+          final webViewsPageController = ref.watch(webViewPagesPageControllerProvider);
+          final webViewPagesNotifier = ref.read(webViewPagesProvider.notifier);
+          final wordHistoryNotifier = ref.read(wordHistoryProvider.notifier);
+          webViewPagesNotifier.state = [...webViewPages, AppWebView(pageUrl, safeAreaPadding: safeAreaPadding,)];
+          webViewsPageController.nextPage(duration: const Duration(milliseconds: 330), curve: Curves.easeInOut);
+          wordHistoryNotifier.add(
+              WordHistory(word: selectedText, url: pageUrl.toString()));
+        }
+      })
+    ],
+    settings: ContextMenuSettings(
+        hideDefaultSystemContextMenuItems: true
+    ),
+  );
+});
+
+
 

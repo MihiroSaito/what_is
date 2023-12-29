@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:what_is/logic/notifier.dart';
 import 'package:what_is/theme.dart';
 import 'package:what_is/component/webivew.dart';
 
+import 'firebase_options.dart';
 import 'logic/common_logic.dart';
 
 
@@ -18,6 +20,9 @@ Color accentColor = const Color(0xFF001AFF);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final text = await getClipboardText();
   runApp(ProviderScope(child: App(text: text)));
 }
@@ -61,6 +66,7 @@ class Home extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
+    final safeAreaPadding = MediaQuery.paddingOf(context);
     final newWord = ref.watch(newWordFromOutsideProvider);
 
     ref.listen(appLifecycleProvider, (previous, next) {
@@ -87,9 +93,10 @@ class Home extends HookConsumerWidget {
                     onGenerateRoute: (_) {
                       return MaterialPageRoute(
                           builder: (_) {
-                            return AppWebView(
-                              url: createUrl(initText ?? newWord!),
-                              safeAreaPadding: MediaQuery.paddingOf(context),);
+                            return AppWebViewPages(
+                              firstPageWord: initText ?? newWord!,
+                              safeAreaPadding: safeAreaPadding,
+                            );
                           }
                       );
                     }
