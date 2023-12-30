@@ -10,18 +10,22 @@ class AppAnimation extends StatefulWidget {
     required this.child,
     this.duration = const Duration(milliseconds: 200),
     this.curve = Curves.easeIn,
-    Key? key}): type = AppAnimationType.fadeIn, super(key: key, );
+    Key? key}) : type = AppAnimationType.fadeIn, alignment = Alignment.center,
+      super(key: key, );
 
   const AppAnimation.scale({
     required this.child,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.easeOutBack,
-    Key? key}): type = AppAnimationType.scale, super(key: key);
+    this.alignment = Alignment.center,
+    Key? key}) : type = AppAnimationType.scale,
+      super(key: key);
 
   final Widget child;
   final AppAnimationType type;
   final Duration duration;
   final Curve curve;
+  final Alignment alignment;
 
   @override
   State<AppAnimation> createState() => _AppAnimationState();
@@ -61,6 +65,7 @@ class _AppAnimationState extends State<AppAnimation> with SingleTickerProviderSt
       );
     } else {
       return ScaleTransition(
+        alignment: widget.alignment,
         scale: _animation, // スケールアニメーションを適用するアニメーションオブジェクト
         child: widget.child,
       );

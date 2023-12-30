@@ -147,17 +147,17 @@ class AppHeader extends HookConsumerWidget {
 
 
   void _showMenu(BuildContext context, double safeAreaPaddingTop) {
-    showCupertinoDialog(context: context, builder: (_) {
-      return GestureDetector(
-        behavior: HitTestBehavior.deferToChild,
-        onTap: () => Navigator.pop(context),
-        child: Material(
-          color: Colors.black.withOpacity(0.5),
+    showDialog(useSafeArea: false,context: context, builder: (_) {
+      return AppAnimation.scale(
+        alignment: Alignment.topRight,
+        child: GestureDetector(
+          behavior: HitTestBehavior.deferToChild,
+          onTap: () => Navigator.pop(context),
           child: Align(
             alignment: Alignment.topRight,
             child: Container(
               width: 208,
-              margin: EdgeInsets.only(top: safeAreaPaddingTop + 64, right: 8.0),
+              margin: EdgeInsets.only(top: safeAreaPaddingTop + 48, right: 8.0),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16.0),
@@ -202,11 +202,13 @@ class AppHeader extends HookConsumerWidget {
                   _item(context, label: '利用規約',
                       onTap: () {
                         launchUrl(Uri.parse(AppConst.termUrl), mode: LaunchMode.externalApplication);
+                        Navigator.pop(context);
                       }),
                   _line(context),
                   _item(context, label: 'プライバシーポリシー',
                       onTap: () {
                         launchUrl(Uri.parse(AppConst.privacyPolicy), mode: LaunchMode.externalApplication);
+                        Navigator.pop(context);
                       }),
                   _line(context),
                   _item(context,
