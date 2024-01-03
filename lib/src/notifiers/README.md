@@ -1,0 +1,10 @@
+# ロジックについて
+検索画面のページを管理するwebPagesProviderに新しい画面をaddしていくで自動的にロジックが構築される流れ
+
+
+## SearchWebPageモデル
+SearchWebPageモデルにはUIに表示するWebViewと
+それをIndexedStackウィジェットに表示する際に識別する「IndexedStackIndex」等を格納する。
+
+## SearchTreeモデル
+SearchTreeモデルはSearchWebPageモデルの親子兄弟関係を関連付けておくためのクラス。

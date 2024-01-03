@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/logic/common_logic.dart';
 import 'package:what_is/logic/word_history.dart';
-import 'package:what_is/theme.dart';
+import 'package:what_is/src/config/theme.dart';
 
 import '../logic/notifier.dart';
 

@@ -8,7 +8,7 @@ import 'package:what_is/logic/notifier.dart';
 import 'package:what_is/logic/word_history.dart';
 
 import '../component/search_again_toast_widget.dart';
-import '../component/webivew.dart';
+import '../src/views/webivew.dart';
 
 WebUri createUrl(String text) {
   return WebUri('https://www.google.co.jp/search?q=$text とは？');
@@ -43,14 +43,7 @@ Future<void> showSearchAgainToast(BuildContext context, WidgetRef ref, {required
             word: text,
             safeAreaPadding: safeAreaPadding,
             onTap: () {
-              ref.read(webViewPagesProvider.notifier).state = [];
-              ref.read(wordHistoryProvider.notifier).clearAndAdd(WordHistory(word: text, url: createUrl(text).toString()));
-              Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (__) => AppWebViewPages(
-                    firstPageWord: text,
-                    safeAreaPadding: safeAreaPadding,
-                  ))
-              );
+              //TODO: 検索画面へ画面遷移する
               _flashController?.dismiss();
             },
           ),

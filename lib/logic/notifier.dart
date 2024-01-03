@@ -60,38 +60,50 @@ class _AppLifecycleObserver extends WidgetsBindingObserver {
 final latestAppLifeCycleStateProvider = StateProvider<AppLifecycleState?>((ref) => null);
 
 
-final currentWebViewControllerProvider = StateProvider.autoDispose<InAppWebViewController?>((ref) => null);
+// final currentWebViewControllerProvider = StateProvider.autoDispose<InAppWebViewController?>((ref) => null);
 
 final isLoadingCurrentWebViewProvider = StateProvider.autoDispose<bool>((ref) => true);
 
-final webViewPagesProvider = StateProvider.autoDispose<List<AppWebView>>((ref) => []);
+// final webViewPagesProvider = StateProvider.autoDispose<List<AppWebView>>((ref) => []);
 
-final webViewPagesPageControllerProvider = StateProvider.autoDispose<PageController>((ref) => PageController());
+// final webViewPagesPageControllerProvider = StateProvider.autoDispose<PageController>((ref) => PageController());
 
-
-final contextMenuProvider = StateProvider.autoDispose.family<ContextMenu, EdgeInsets>((ref, safeAreaPadding) {
-  return ContextMenu(
-    menuItems: [
-      ContextMenuItem(id: 1, title: "さらに検索", action: () async {
-        final selectedText = await ref.watch(currentWebViewControllerProvider)?.getSelectedText();
-        if (selectedText != null) {
-          final pageUrl = createUrl(selectedText);
-          final webViewPages = ref.watch(webViewPagesProvider);
-          final webViewsPageController = ref.watch(webViewPagesPageControllerProvider);
-          final webViewPagesNotifier = ref.read(webViewPagesProvider.notifier);
-          final wordHistoryNotifier = ref.read(wordHistoryProvider.notifier);
-          webViewPagesNotifier.state = [...webViewPages, AppWebView(pageUrl, safeAreaPadding: safeAreaPadding,)];
-          webViewsPageController.nextPage(duration: const Duration(milliseconds: 330), curve: Curves.easeInOut);
-          wordHistoryNotifier.add(
-              WordHistory(word: selectedText, url: pageUrl.toString()));
-        }
-      })
-    ],
-    settings: ContextMenuSettings(
-        hideDefaultSystemContextMenuItems: true
-    ),
-  );
-});
+//
+// final contextMenuProvider = StateProvider.autoDispose.family<ContextMenu, EdgeInsets>((ref, safeAreaPadding) {
+//   return ContextMenu(
+//     menuItems: [
+//       ContextMenuItem(id: 1, title: "さらに検索", action: () async {
+//         final selectedText = await ref.watch(currentWebViewControllerProvider)?.getSelectedText();
+//         if (selectedText != null) {
+//           final pageUrl = createUrl(selectedText);
+//           final webViewPages = ref.watch(webViewPagesProvider);
+//           final webViewsPageController = ref.watch(webViewPagesPageControllerProvider);
+//           final webViewPagesNotifier = ref.read(webViewPagesProvider.notifier);
+//           final wordHistoryNotifier = ref.read(wordHistoryProvider.notifier);
+//           webViewPagesNotifier.state = [...webViewPages, AppWebView(pageUrl, safeAreaPadding: safeAreaPadding,)];
+//           wordHistoryNotifier.add(
+//               WordHistory(word: selectedText, url: pageUrl.toString()));
+//           webViewsPageController.nextPage(duration: const Duration(milliseconds: 330), curve: Curves.easeInOut);
+//         }
+//       }),
+//       ContextMenuItem(id: 2, title: "あとで検索", action: () async {
+//         final selectedText = await ref.watch(currentWebViewControllerProvider)?.getSelectedText();
+//         if (selectedText != null) {
+//           final pageUrl = createUrl(selectedText);
+//           final webViewPages = ref.watch(webViewPagesProvider);
+//           final webViewPagesNotifier = ref.read(webViewPagesProvider.notifier);
+//           final wordHistoryNotifier = ref.read(wordHistoryProvider.notifier);
+//           webViewPagesNotifier.state = [...webViewPages, AppWebView(pageUrl, safeAreaPadding: safeAreaPadding,)];
+//           wordHistoryNotifier.add(
+//               WordHistory(word: selectedText, url: pageUrl.toString()));
+//         }
+//       }),
+//     ],
+//     settings: ContextMenuSettings(
+//         hideDefaultSystemContextMenuItems: true
+//     ),
+//   );
+// });
 
 
 

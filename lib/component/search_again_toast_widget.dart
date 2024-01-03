@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:what_is/component/squishy_button.dart';
 
 import '../main.dart';
-import '../theme.dart';
+import '../src/config/theme.dart';
 
 class SearchAgainToastWidget extends StatelessWidget {
   const SearchAgainToastWidget({
