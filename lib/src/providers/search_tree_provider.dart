@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/models/search_tree.dart';
-import 'package:what_is/src/notifiers/web_pages_notifier.dart';
 
 
 final searchTreeProvider = NotifierProvider.autoDispose<SearchTreeNotifier, SearchTree?>(() {

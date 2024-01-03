@@ -5,13 +5,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
+import 'package:what_is/src/providers/device_size_provider.dart';
 
 import '../config/const.dart';
 import '../config/theme.dart';
 
 class AppHeader extends HookConsumerWidget {
-  const AppHeader({super.key, required this.safeAreaPaddingTop});
-  final double safeAreaPaddingTop;
+  const AppHeader({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,7 +31,7 @@ class AppHeader extends HookConsumerWidget {
                 const Spacer(),
                 SquishyButton(
                   onTap: () {
-                    _showMenu(context, safeAreaPaddingTop);
+                    _showMenu(context, ref.watch(safeAreaPaddingProvider).top);
                   },
                   disableWidget: const SizedBox.shrink(),
                   child: const Icon(
@@ -54,7 +54,7 @@ class AppHeader extends HookConsumerWidget {
 
 
   void _showMenu(BuildContext context, double safeAreaPaddingTop) {
-    showDialog(useSafeArea: false,context: context, builder: (_) {
+    showDialog(useSafeArea: false, context: context, builder: (_) {
       return AppAnimation.scale(
         alignment: Alignment.topRight,
         child: GestureDetector(

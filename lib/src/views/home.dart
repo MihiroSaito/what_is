@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
-import 'package:what_is/src/notifiers/web_pages_notifier.dart';
 
 import '../../logic/notifier.dart';
 import '../components/header.dart';
+import '../providers/web_pages_provider.dart';
 import 'webivew.dart';
 
 class Home extends HookConsumerWidget {
@@ -15,9 +15,6 @@ class Home extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final safeAreaPadding = MediaQuery.paddingOf(context);
-    final newWord = ref.watch(newWordFromOutsideProvider);
-
     ref.listen(appLifecycleProvider, (previous, next) {
 
     });
@@ -27,7 +24,7 @@ class Home extends HookConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            AppHeader(safeAreaPaddingTop: safeAreaPadding.top,),
+            AppHeader(),
             Expanded(
               child: Navigator(
                 onGenerateRoute: (_) {

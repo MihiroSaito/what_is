@@ -38,11 +38,11 @@ class SearchTree {
   SearchTree({
     required this.searchWebPage,
     this.children
-  }) : id = _generateTreeId(searchWebPage.indexedStackIndex);
+  }) : id = generateTreeId(searchWebPage.indexedStackIndex);
 
 
   // indexedStackIndexをそのままIDに利用するだけのロジックだが、別ロジックでこれを意識させないためのもの
-  static _generateTreeId(int indexedStackIndex) {
+  static generateTreeId(int indexedStackIndex) {
     return indexedStackIndex;
   }
 

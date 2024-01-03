@@ -6,13 +6,13 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
-import 'package:what_is/src/notifiers/current_webview_controller.dart';
-import 'package:what_is/src/notifiers/display_web_page_notifier.dart';
-import 'package:what_is/src/notifiers/loading_webview_notifier.dart';
 
 import '../../main.dart';
-import '../notifiers/content_menu_notifier.dart';
-import '../notifiers/web_pages_notifier.dart';
+import '../providers/content_menu_provider.dart';
+import '../providers/current_webview_controller_provider.dart';
+import '../providers/display_web_page_provider.dart';
+import '../providers/loading_webview_provider.dart';
+import '../providers/web_pages_provider.dart';
 
 
 class SearchViewWidget extends HookConsumerWidget {
@@ -70,11 +70,11 @@ class AppWebView extends HookConsumerWidget {
   const AppWebView({
     super.key,
     required this.initialUrl,
-    required this.parentSearchTreeId
+    required this.searchTreeId
   });
 
   final WebUri initialUrl;
-  final int? parentSearchTreeId;
+  final int? searchTreeId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,7 +87,7 @@ class AppWebView extends HookConsumerWidget {
         transparentBackground: true,
         javaScriptEnabled: true,
       ),
-      contextMenu: ref.watch(contextMenuProvider(parentSearchTreeId)),
+      contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
       onLoadStart: (_, __) => isLoadingNotifier.state = true,
       onLoadStop: (_, __) => isLoadingNotifier.state = false,
       onWebViewCreated: (controller) {

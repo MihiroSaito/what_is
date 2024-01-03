@@ -1,10 +1,10 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/models/search_tree.dart';
 import 'package:what_is/src/models/search_web_page.dart';
-import 'package:what_is/src/notifiers/search_tree_notifier.dart';
 import 'package:what_is/src/views/webivew.dart';
 
 import '../utils/util.dart';
+import 'search_tree_provider.dart';
 
 
 
@@ -25,22 +25,26 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
 
   /// IndexedStackウィジェットにWebページを追加する。
   /// * 追加したタイミングでサーチツリー（ロジック側）も更新する。
+  /// * 返却値に追加したSearchWebPageの情報を渡す
   ///
-  void add({required int? parentTreeId, required String searchWord}) {
+  SearchWebPage add({required int? parentTreeId, required String searchWord}) {
     final initialUrl = createUrl(searchWord);
-    final newSearchWebPage = SearchWebPage(
-        indexedStackIndex: state.length + 1,
-        searchWord: searchWord,
-        initUrl: initialUrl.toString(),
-        webViewWidget: AppWebView(
-            initialUrl: initialUrl,
-            parentSearchTreeId: parentTreeId)
-    );
+    final newIndexedStackIndex = state.length;
+    final newSearchTree = SearchTree(
+        searchWebPage: SearchWebPage(
+            indexedStackIndex: newIndexedStackIndex,
+            searchWord: searchWord,
+            initUrl: initialUrl.toString(),
+            webViewWidget: AppWebView(
+                initialUrl: initialUrl,
+                searchTreeId: SearchTree.generateTreeId(newIndexedStackIndex))
+        ));
     ref.read(searchTreeProvider.notifier).add(
         parentTreeId: parentTreeId,
-        newSearchTree: SearchTree(searchWebPage: newSearchWebPage)
+        newSearchTree: newSearchTree
     );
-    state = [...state, newSearchWebPage];
+    state = [...state, newSearchTree.searchWebPage];
+    return newSearchTree.searchWebPage;
   }
 
   /// 指定したIndexのWebViewを削除する
