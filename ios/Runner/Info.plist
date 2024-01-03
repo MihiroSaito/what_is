@@ -19,7 +19,7 @@
 		<string>ja</string>
 	</array>
 	<key>CFBundleName</key>
-	<string>〇〇とは？</string>
+	<string>what_is</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
