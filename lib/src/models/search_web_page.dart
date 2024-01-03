@@ -1,5 +1,16 @@
 import '../views/webivew.dart';
 
+/// 検索したWebページの情報を格納する
+/// ```
+/// SearchWebPage(
+///     indexedStackIndex: 3,
+///     searchWord: 'マイクロサービス',
+///     initUrl: 'https:// www.google.co.jp/search?q=〇〇 とは？',
+///     webViewWidget: AppWebView
+/// )
+/// ```
+///
+///
 class SearchWebPage {
 
   /// 検索画面のIndexedStackウィジェットのIndexに使用する値

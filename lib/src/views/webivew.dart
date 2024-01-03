@@ -8,6 +8,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/component/animation.dart';
 import 'package:what_is/component/squishy_button.dart';
 import 'package:what_is/logic/notifier.dart';
+import 'package:what_is/src/models/search_tree.dart';
+import 'package:what_is/src/models/search_web_page.dart';
 import 'package:what_is/src/notifiers/current_webview_controller.dart';
 import 'package:what_is/src/notifiers/display_web_page_notifier.dart';
 

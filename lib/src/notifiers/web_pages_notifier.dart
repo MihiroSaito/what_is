@@ -1,4 +1,3 @@
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/logic/common_logic.dart';
 import 'package:what_is/src/models/search_tree.dart';
@@ -38,10 +37,7 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
     );
     ref.read(searchTreeProvider.notifier).add(
         parentTreeId: parentTreeId,
-        newSearchTree: SearchTree(
-            id: newSearchWebPage.indexedStackIndex,
-            searchWebPage: newSearchWebPage
-        )
+        newSearchTree: SearchTree(searchWebPage: newSearchWebPage)
     );
     state = [...state, newSearchWebPage];
   }
@@ -53,9 +49,3 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
   // }
 
 }
-
-
-// /// 検索画面のIndexedStackで状態を保持した状態で管理したいWebViewのListの最後のIndexを取得
-// final lastWebPagesIndexProvider = Provider.autoDispose<int>((ref) {
-//   return ref.watch(webPagesProvider).length - 1;
-// });

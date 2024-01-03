@@ -51,7 +51,7 @@ class SearchTreeNotifier extends AutoDisposeNotifier<SearchTree?> {
 /// 特定のIDに対応するSearchTreeを再帰的に検索する関数
 ///
 SearchTree? _findTreeById(SearchTree node, int targetId) {
-  if (node.id == targetId) {
+  if (node.searchWebPage.indexedStackIndex == targetId) {
     return node;
   }
   if (node.children != null) {
