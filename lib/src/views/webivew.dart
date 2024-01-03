@@ -6,6 +6,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../main.dart';
 import '../providers/content_menu_provider.dart';
@@ -42,19 +43,14 @@ class SearchViewWidget extends HookConsumerWidget {
                 }).toList(),
               ),
             ),
-            FutureBuilder(
-              future: currentWebViewController?.isLoading(),
-              builder: (_, snapshot) {
-                final isLoading = snapshot.data ?? false;
-                return WebViewBottomBar(
-                    onGoBack: () => currentWebViewController?.goBack(),
-                    onGoForward: () => currentWebViewController?.goForward(),
-                    onShare: () {
-                      //TODO: 実装する。
-                    },
-                    onReload: () => currentWebViewController?.reload(),
-                  );
-              }
+            WebViewBottomBar(
+              onGoBack: () => currentWebViewController?.goBack(),
+              onGoForward: () => currentWebViewController?.goForward(),
+              onShare: () async {
+                final url = await currentWebViewController?.getOriginalUrl();
+                if (url != null) await Share.share(url.toString());
+              },
+              onReload: () => currentWebViewController?.reload(),
             ),
           ],
         ),
@@ -89,7 +85,7 @@ class AppWebView extends HookConsumerWidget {
       ),
       contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
       onLoadStart: (_, __) => isLoadingNotifier.state = true,
-      onLoadStop: (_, __) => isLoadingNotifier.state = false,
+      onLoadStop: (_, __) => isLoadingNotifier.state = false, //TODO: ブラウザバックした時に再ロードするが止まってくれないためどうにか対処する
       onWebViewCreated: (controller) {
         ref.read(currentWebViewControllerProvider.notifier).update(controller);
       },
