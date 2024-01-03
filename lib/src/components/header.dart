@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:what_is/component/animation.dart';
-import 'package:what_is/component/squishy_button.dart';
+import 'package:what_is/src/components/animation.dart';
+import 'package:what_is/src/components/squishy_button.dart';
 
 import '../config/const.dart';
 import '../config/theme.dart';

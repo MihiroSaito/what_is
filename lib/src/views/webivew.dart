@@ -2,16 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:what_is/component/animation.dart';
-import 'package:what_is/component/squishy_button.dart';
-import 'package:what_is/logic/notifier.dart';
-import 'package:what_is/src/models/search_tree.dart';
-import 'package:what_is/src/models/search_web_page.dart';
+import 'package:what_is/src/components/animation.dart';
+import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/notifiers/current_webview_controller.dart';
 import 'package:what_is/src/notifiers/display_web_page_notifier.dart';
+import 'package:what_is/src/notifiers/loading_webview_notifier.dart';
 
 import '../../main.dart';
 import '../notifiers/content_menu_notifier.dart';
@@ -45,21 +42,20 @@ class SearchViewWidget extends HookConsumerWidget {
                 }).toList(),
               ),
             ),
-            WebViewBottomBar(
-                onGoBack: () {
-                  //TODO: 実装する。
-                },
-                onGoForward: () {
-                  //TODO: 実装する。
-                },
-                onShare: () {
-                  //TODO: 実装する。
-                },
-                onReload: () {
-                  //TODO: 実装する。
-                },
-                isLoading: false //TODO: 実装する
-              ),
+            FutureBuilder(
+              future: currentWebViewController?.isLoading(),
+              builder: (_, snapshot) {
+                final isLoading = snapshot.data ?? false;
+                return WebViewBottomBar(
+                    onGoBack: () => currentWebViewController?.goBack(),
+                    onGoForward: () => currentWebViewController?.goForward(),
+                    onShare: () {
+                      //TODO: 実装する。
+                    },
+                    onReload: () => currentWebViewController?.reload(),
+                  );
+              }
+            ),
           ],
         ),
       ],
@@ -83,8 +79,7 @@ class AppWebView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final webViewController = useState<InAppWebViewController?>(null);
-    final isLoadingNotifier = ref.watch(isLoadingCurrentWebViewProvider.notifier);
+    final isLoadingNotifier = ref.watch(isLoadingWebViewProvider.notifier);
 
     return InAppWebView(
       initialUrlRequest: URLRequest(url: initialUrl),
@@ -96,7 +91,6 @@ class AppWebView extends HookConsumerWidget {
       onLoadStart: (_, __) => isLoadingNotifier.state = true,
       onLoadStop: (_, __) => isLoadingNotifier.state = false,
       onWebViewCreated: (controller) {
-        webViewController.value = controller;
         ref.read(currentWebViewControllerProvider.notifier).update(controller);
       },
       onUpdateVisitedHistory: (controller, __, ___) async {
@@ -113,13 +107,11 @@ class AppWebView extends HookConsumerWidget {
 class WebViewBottomBar extends StatelessWidget {
   const WebViewBottomBar({
     super.key,
-    required this.isLoading,
     required this.onGoBack,
     required this.onGoForward,
     required this.onShare,
     required this.onReload
   });
-  final bool isLoading;
   final VoidCallback onGoBack;
   final VoidCallback onGoForward;
   final VoidCallback onShare;
@@ -195,18 +187,23 @@ class WebViewBottomBar extends StatelessWidget {
             color: accentColor,
           ),
         ),
-        if (isLoading == false)
-          Positioned(
-            top: 0,
-            right: 0,
-            left: 0,
-            child: AppAnimation.fadeIn(
-              child: Container(
-                height: 2.5,
-                color: Theme.of(context).scaffoldBackgroundColor,
+        Consumer(
+          builder: (_, ref, __) {
+            final isLoading = ref.watch(isLoadingWebViewProvider);
+            if (isLoading) return const SizedBox.shrink();
+            return Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: AppAnimation.fadeIn(
+                child: Container(
+                  height: 2.5,
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                ),
               ),
-            ),
-          ),
+            );
+          }
+        ),
       ],
     );
   }

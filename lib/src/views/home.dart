@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:what_is/logic/common_logic.dart';
 import 'package:what_is/main.dart';
-import 'package:what_is/src/models/search_web_page.dart';
 import 'package:what_is/src/notifiers/web_pages_notifier.dart';
 
 import '../../logic/notifier.dart';

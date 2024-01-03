@@ -1,20 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:what_is/component/squishy_button.dart';
+import 'package:what_is/src/components/squishy_button.dart';
 
-import '../main.dart';
-import '../src/config/theme.dart';
+import '../../main.dart';
+import '../config/theme.dart';
 
 class SearchAgainToastWidget extends StatelessWidget {
   const SearchAgainToastWidget({
     super.key,
     required this.word,
-    required this.safeAreaPadding,
     required this.onTap
   });
 
   final String word;
-  final EdgeInsets safeAreaPadding;
   final VoidCallback onTap;
 
   @override
