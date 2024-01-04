@@ -8,6 +8,7 @@ import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/providers/device_size_provider.dart';
 import 'package:what_is/src/providers/web_pages_provider.dart';
+import 'package:what_is/src/routing/navigator.dart';
 
 import '../config/const.dart';
 import '../config/theme.dart';
@@ -51,7 +52,7 @@ class AppHeader extends HookConsumerWidget {
                       child: SquishyButton(
                         disableWidget: const SizedBox.shrink(),
                         onTap: () {
-                          //TODO: 画面遷移
+                          AppNavigator().tpSearchTreePage();
                         },
                         child: Stack(
                           children: [
@@ -116,11 +117,13 @@ class AppHeader extends HookConsumerWidget {
             ),
           ),
         ),
-        Container(
+        SizedBox(
           height: 1.0,
           width: double.infinity,
-          color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.15),
-        ),
+          child: ColoredBox(
+            color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.15),
+          ),
+        )
       ],
     );
   }
