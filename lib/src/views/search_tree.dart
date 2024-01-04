@@ -18,7 +18,7 @@ class SearchTreePage extends StatelessWidget {
             Expanded(
               child: InteractiveViewer(
                 constrained: false,
-                child: const _TreeWidget(
+                child: const _TreeWidget( //TODO: ここをSearchTreeの情報を元に作成する。
                   labelType: _LabelType.home,
                   children: [
                     //TODO: あれば
@@ -82,6 +82,10 @@ enum _LabelType {
   home,
   currentPage
 }
+
+
+
+
 
 
 class _TreeWidget extends StatelessWidget {
@@ -188,12 +192,16 @@ class _TreeWidget extends StatelessWidget {
 }
 
 
+
+
+
+
 class _Label extends StatelessWidget {
-  const _Label.home({super.key})
+  const _Label.home()
       : text = 'ホーム',
         textColor = Colors.white;
 
-  const _Label.currentPage({super.key})
+  const _Label.currentPage()
       : text = '現在のページ',
         textColor = Colors.black; //TODO: ちゃんとした色にする
   final String text;
