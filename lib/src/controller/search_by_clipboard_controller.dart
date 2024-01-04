@@ -2,6 +2,8 @@ import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:what_is/src/routing/navigator.dart';
 
 import '../components/search_again_toast_widget.dart';
 import '../../main.dart';
@@ -11,9 +13,9 @@ import '../views/webivew.dart';
 
 class SearchByClipBoardController {
 
-  FlashController<Object?>? _flashController;
+  static FlashController<Object?>? _flashController;
 
-  Future<void> showSearchAgainToast() async {
+  Future<void> show(BuildContext context, WidgetRef ref) async {
     final String? text = await getClipboardText(); // 現在のクリップボードにあるワードを取得
     if (text == null) return;
     if (!(_flashController?.controller.isCompleted ?? true)) return;
@@ -38,16 +40,21 @@ class SearchByClipBoardController {
             content: SearchAgainToastWidget(
               word: text,
               onTap: () {
-                //TODO: 検索画面へ画面遷移する
+                AppNavigator().toSearchView(context, ref, searchText: text);
                 _flashController?.dismiss();
               },
             ),
           );
         }
     ).then((value) => _flashController = null);
-    await HapticFeedback.heavyImpact();
-    await Future.delayed(const Duration(milliseconds: 100));
-    await HapticFeedback.heavyImpact();
+  }
+
+
+  void pop() {
+    if (_flashController != null) {
+      print('vdsv');
+      _flashController?.dismiss();
+    }
   }
 
 }
