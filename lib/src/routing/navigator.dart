@@ -33,4 +33,7 @@ class AppNavigator {
     ));
   }
 
+
+  void pop() => Navigator.pop(App.navigatorKey.currentContext!);
+
 }
