@@ -33,12 +33,18 @@ class SearchTree {
 
   /// この階層のさらに子階層の情報
   ///
-  final List<SearchTree>? children;
+  final List<SearchTree> children;
 
   SearchTree({
     required this.searchWebPage,
-    this.children
+    this.children = const []
   }) : id = generateTreeId(searchWebPage.indexedStackIndex);
+
+
+  @override
+  String toString() {
+    return "SearchTree(id: $id, searchWebPage: $searchWebPage, children: $children)";
+  }
 
 
   // indexedStackIndexをそのままIDに利用するだけのロジックだが、別ロジックでこれを意識させないためのもの

@@ -1,6 +1,7 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/providers/display_web_page_provider.dart';
+import 'package:what_is/src/providers/search_tree_provider.dart';
 
 import 'current_webview_controller_provider.dart';
 import 'web_pages_provider.dart';
@@ -34,3 +35,6 @@ final contextMenuProvider = Provider.autoDispose.family<ContextMenu, int?>((ref,
     ),
   );
 });
+
+
+

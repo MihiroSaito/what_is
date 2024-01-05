@@ -52,7 +52,6 @@ class SearchByClipBoardController {
 
   void pop() {
     if (_flashController != null) {
-      print('vdsv');
       _flashController?.dismiss();
     }
   }

@@ -6,7 +6,7 @@ import 'package:what_is/src/providers/app_lifecycle_provider.dart';
 import 'package:what_is/src/routing/navigator.dart';
 
 import '../components/header.dart';
-import '../controller/search_by_clipboard_controller.dart';
+import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 import 'webivew.dart';
 

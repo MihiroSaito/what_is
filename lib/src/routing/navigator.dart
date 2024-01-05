@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
+import 'package:what_is/src/providers/search_tree_provider.dart';
 import 'package:what_is/src/views/search_tree.dart';
 
-import '../controller/search_by_clipboard_controller.dart';
+import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 import '../views/webivew.dart';
 

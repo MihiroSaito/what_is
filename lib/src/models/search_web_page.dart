@@ -35,4 +35,13 @@ class SearchWebPage {
     required this.initUrl,
     required this.webViewWidget
   });
+
+  @override
+  String toString() {
+    return "SearchWebPage("
+        "indexedStackIndex: $indexedStackIndex, "
+        "searchWord: $searchWord, "
+        "initUrl: $initUrl, "
+        "webViewWidget: -----)";
+  }
 }

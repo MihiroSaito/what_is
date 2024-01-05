@@ -27,11 +27,12 @@ class SearchTreeNotifier extends AutoDisposeNotifier<SearchTree?> {
       state = newSearchTree; // サーチツリーがまだない=初回の検索 だったらサーチツリーを作成し処理終了
       return;
     }
+
     if (parentTreeId == null) throw ErrorDescription('ツリーが存在する場合はparentTreeIdにはNullを指定できません');
 
     // 指定したIDに一致するサーチツリーを取得し、そのツリーのchildrenに値を追加する
     SearchTree? child1 = _findTreeById(wholeSearchTree, parentTreeId);
-    if (child1 != null) child1.children?.add(newSearchTree);
+    if (child1 != null) child1.children.add(newSearchTree);
 
     // 新しいサーチツリーを作成
     state = wholeSearchTree;
@@ -53,8 +54,8 @@ SearchTree? _findTreeById(SearchTree node, int targetId) {
   if (node.id == targetId) {
     return node;
   }
-  if (node.children != null) {
-    for (var child in node.children!) {
+  if (node.children.isNotEmpty) {
+    for (var child in node.children) {
       var result = _findTreeById(child, targetId);
       if (result != null) {
         return result;

@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:what_is/src/providers/search_tree_provider.dart';
 
 import '../../main.dart';
 import '../providers/content_menu_provider.dart';
