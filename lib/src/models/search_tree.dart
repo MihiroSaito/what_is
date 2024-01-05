@@ -33,7 +33,7 @@ class SearchTree {
 
   /// この階層のさらに子階層の情報
   ///
-  final List<SearchTree> children;
+  List<SearchTree> children;
 
   SearchTree({
     required this.searchWebPage,

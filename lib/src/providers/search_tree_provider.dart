@@ -32,7 +32,7 @@ class SearchTreeNotifier extends AutoDisposeNotifier<SearchTree?> {
 
     // 指定したIDに一致するサーチツリーを取得し、そのツリーのchildrenに値を追加する
     SearchTree? child1 = _findTreeById(wholeSearchTree, parentTreeId);
-    if (child1 != null) child1.children.add(newSearchTree);
+    if (child1 != null) child1.children = List.of(child1.children)..add(newSearchTree);
 
     // 新しいサーチツリーを作成
     state = wholeSearchTree;
