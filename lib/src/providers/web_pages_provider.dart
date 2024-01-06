@@ -27,8 +27,12 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
   /// * 追加したタイミングでサーチツリー（ロジック側）も更新する。
   /// * 返却値に追加したSearchWebPageの情報を渡す
   ///
-  SearchWebPage add({required int? parentTreeId, required String searchWord}) {
-    final initialUrl = createUrl(searchWord);
+  SearchWebPage add({
+    required int? parentTreeId,
+    required String searchWord,
+    bool isDirectUrl = false
+  }) {
+    final initialUrl = createUrl(searchWord, isDirectUrl: isDirectUrl);
     final newIndexedStackIndex = state.length;
     final newSearchTree = SearchTree(
         searchWebPage: SearchWebPage(

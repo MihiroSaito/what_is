@@ -68,7 +68,7 @@ class SearchByClipBoardController {
             content: SearchByClipboardUrlToastWidget(
               word: text,
               onTap: () {
-                AppNavigator().toSearchView(context, ref, searchText: text);
+                AppNavigator().toSearchView(context, ref, searchText: text, isDirectUrl: true);
                 _flashController?.dismiss();
               },
             ),

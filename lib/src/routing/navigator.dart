@@ -11,14 +11,18 @@ import '../views/webivew.dart';
 
 class AppNavigator {
 
-  void toSearchView(BuildContext context, WidgetRef ref, {required String searchText}) {
+  void toSearchView(BuildContext context, WidgetRef ref, {
+    required String searchText,
+    bool isDirectUrl = false
+  }) {
     Navigator.push(context, MaterialPageRoute(builder: (_) {
       return const SearchViewWidget();
     }));
 
     ref.watch(webPagesProvider.notifier).add(
         parentTreeId: null,
-        searchWord: searchText);
+        searchWord: searchText,
+        isDirectUrl: isDirectUrl);
 
     // クリップボードからコピーするためのポップは非表示にする
     SearchByClipBoardController.pop();
