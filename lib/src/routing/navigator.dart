@@ -21,7 +21,7 @@ class AppNavigator {
         searchWord: searchText);
 
     // クリップボードからコピーするためのポップは非表示にする
-    SearchByClipBoardController().pop();
+    SearchByClipBoardController.pop();
   }
 
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
 import 'package:what_is/src/config/theme.dart';
@@ -8,7 +9,6 @@ import 'package:what_is/src/routing/navigator.dart';
 import '../components/header.dart';
 import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
-import 'webivew.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -25,15 +25,17 @@ class Home extends StatelessWidget {
             const AppHeader(),
             Expanded(
               child: Navigator(onGenerateRoute: (_) => MaterialPageRoute(
-                builder: (pageContext) => Consumer(
+                builder: (pageContext) => HookConsumer(
                   builder: (_, ref, __) {
 
                     ref.listen(appLifecycleProvider, (previous, next) {
                       final pages = ref.read(webPagesProvider);
                       if (next == AppLifecycleState.resumed && pages.isEmpty) {
-                        SearchByClipBoardController().show(pageContext, ref);
+                        SearchByClipBoardController.show(pageContext, ref);
                       }
                     });
+
+                    final textController = useTextEditingController();
 
                     return Align(
                       alignment: Alignment.topCenter,
@@ -62,6 +64,12 @@ class Home extends StatelessWidget {
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: TextField(
+                            toolbarOptions: const ToolbarOptions(
+                              cut: true,
+                              copy: true,
+                              paste: true,
+                              selectAll: false,
+                            ),
                             autofocus: true,
                             decoration: InputDecoration(
                               border: const UnderlineInputBorder(
@@ -72,25 +80,9 @@ class Home extends StatelessWidget {
                                   color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.4)
                               ),
                             ),
-                            contextMenuBuilder: (_, editableTextState) {
-                              return AdaptiveTextSelectionToolbar.buttonItems(
-                                anchors: editableTextState.contextMenuAnchors,
-                                buttonItems: [
-                                  ContextMenuButtonItem(
-                                    label: 'コピー',
-                                    onPressed: () {
-                                      //TODO: コピーできるようにする
-                                    },
-                                  ),
-                                  ContextMenuButtonItem(
-                                    label: 'ペースト',
-                                    onPressed: () {
-                                      //TODO: ペーストできるようにする
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
+                            controller: textController,
+                            keyboardAppearance: AppTheme.isDarkMode()
+                                ? Brightness.dark : Brightness.light,
                             style: TextStyle(
                                 color: Theme.of(context).textTheme.bodyMedium!.color
                             ),
