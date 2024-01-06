@@ -49,7 +49,7 @@ class SearchByClipBoardController {
   static Future<void> _urlFlash(BuildContext context, WidgetRef ref, String text) async {
     await App.navigatorKey.currentContext!.showFlash(
         transitionDuration: const Duration(milliseconds: 500),
-        duration: const Duration(milliseconds: 555000),
+        duration: const Duration(milliseconds: 5500),
         builder: (_, controller) {
 
           _flashController = controller;
