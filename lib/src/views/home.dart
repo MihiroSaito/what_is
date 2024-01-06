@@ -72,10 +72,30 @@ class Home extends StatelessWidget {
                                   color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.4)
                               ),
                             ),
+                            contextMenuBuilder: (_, editableTextState) {
+                              return AdaptiveTextSelectionToolbar.buttonItems(
+                                anchors: editableTextState.contextMenuAnchors,
+                                buttonItems: [
+                                  ContextMenuButtonItem(
+                                    label: 'コピー',
+                                    onPressed: () {
+                                      //TODO: コピーできるようにする
+                                    },
+                                  ),
+                                  ContextMenuButtonItem(
+                                    label: 'ペースト',
+                                    onPressed: () {
+                                      //TODO: ペーストできるようにする
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                             style: TextStyle(
                                 color: Theme.of(context).textTheme.bodyMedium!.color
                             ),
                             textInputAction: TextInputAction.search,
+
                             cursorColor: accentColor,
                             onSubmitted: (text) {
                               if (text.isEmpty) return;

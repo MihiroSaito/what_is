@@ -12,7 +12,7 @@ import 'package:what_is/src/providers/search_tree_provider.dart';
 import '../../main.dart';
 import '../providers/content_menu_provider.dart';
 import '../providers/current_webview_controller_provider.dart';
-import '../providers/display_web_page_provider.dart';
+import '../providers/display_web_page_index_provider.dart';
 import '../providers/loading_webview_provider.dart';
 import '../providers/web_pages_provider.dart';
 

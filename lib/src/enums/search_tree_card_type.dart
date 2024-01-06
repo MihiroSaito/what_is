@@ -1,4 +1,0 @@
-enum SearchTreeCardType {
-  home,
-  currentPage
-}

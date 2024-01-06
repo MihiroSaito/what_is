@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
-import 'package:what_is/src/components/squishy_button.dart';
+import 'package:what_is/src/config/theme.dart';
 import 'package:what_is/src/controllers/search_tree_controller.dart';
-import 'package:what_is/src/enums/search_tree_card_type.dart';
-import 'package:what_is/src/providers/display_web_page_provider.dart';
+import 'package:what_is/src/providers/display_web_page_index_provider.dart';
+import 'package:what_is/src/providers/display_web_page_tree_id_provider.dart';
 import 'package:what_is/src/providers/search_tree_provider.dart';
 import 'package:what_is/src/routing/navigator.dart';
 
@@ -20,6 +19,7 @@ class SearchTreePage extends HookConsumerWidget {
 
     final searchTree = ref.watch(searchTreeProvider);
     final searchTreeWidget = SearchTreeController().createSearchTreeWidget(searchTree);
+    final safeAreaPadding = MediaQuery.paddingOf(context);
 
     return Scaffold(
       body: Stack(
@@ -28,11 +28,13 @@ class SearchTreePage extends HookConsumerWidget {
             constrained: false,
             clipBehavior: Clip.none,
             alignment: Alignment.topLeft,
+            maxScale: 1.0,
+            minScale: 0.6,
             boundaryMargin: EdgeInsets.only(
-                top: 24.0,
+                top: 24.0 + safeAreaPadding.top + _Header.height,
                 right: 24.0,
                 left: 24.0,
-                bottom: 24.0 + MediaQuery.paddingOf(context).bottom
+                bottom: 24.0 + safeAreaPadding.bottom
             ),
             child: searchTreeWidget,
           ),
@@ -71,7 +73,7 @@ class _Header extends StatelessWidget {
                 child: AppTextButton(
                   '完了',
                   style: TextStyle(
-                    color: accentColor,
+                    color: AppTheme.isDarkMode()? Colors.white : accentColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 16
                   ),
@@ -103,7 +105,7 @@ class _Header extends StatelessWidget {
 
 class SearchTreeWidget extends HookConsumerWidget {
   const SearchTreeWidget({
-    this.cardType,
+    this.isHomeCard = false,
     this.children = const [],
     super.key,
     required this.title,
@@ -111,7 +113,7 @@ class SearchTreeWidget extends HookConsumerWidget {
     required this.searchTreeId,
     required this.pageThumbnail
   });
-  final SearchTreeCardType? cardType;
+  final bool isHomeCard;
   final List<Widget> children;
 
   final String title;
@@ -124,7 +126,6 @@ class SearchTreeWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final isHomeCard = cardType == SearchTreeCardType.home;
     final hasChildren = children.isNotEmpty;
 
     return Container(
@@ -139,15 +140,14 @@ class SearchTreeWidget extends HookConsumerWidget {
         children: [
           _card(ref, searchTreeId),
 
-          if (hasChildren)
-            Padding(
-              padding: const EdgeInsets.only(left: 40.0),
-              child: Container(
-                height: 16.0,
-                width: 6.0,
-                color: areaColor.withOpacity(0.3),
-              ),
+          Padding(
+            padding: const EdgeInsets.only(left: 40.0),
+            child: Container(
+              height: 16.0,
+              width: 6.0,
+              color: hasChildren? areaColor.withOpacity(0.3) : null,
             ),
+          ),
 
           if (hasChildren)
             Container(
@@ -159,6 +159,7 @@ class SearchTreeWidget extends HookConsumerWidget {
                   color: areaColor.withOpacity(0.2)
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: children,
               ),
             ),
@@ -168,27 +169,34 @@ class SearchTreeWidget extends HookConsumerWidget {
   }
 
   Widget labelIfNeed() {
-    if (cardType == SearchTreeCardType.home) {
+    if (isHomeCard) {
       return const _CardLabelHome();
-    } else if (cardType == SearchTreeCardType.currentPage) {
-      return const _CardLabelCurrentPage();
     } else {
       return const SizedBox.shrink();
     }
   }
 
   Widget _card(WidgetRef ref, int id) {
-    return SquishyButton(
+    return GestureDetector(
       onTap: () {
         AppNavigator().pop();
         ref.read(displayWebPageIndexProvider.notifier).change(index: id);
       },
-      disableWidget: const SizedBox.shrink(),
       child: Container(
         width: 340,
         height: 170,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppTheme.isDarkMode()
+              ? const Color(0xFF232425)
+              : Colors.white,
+          border: id == ref.watch(displayWebPageTreeIdProvider)
+              ? Border.all(
+                  width: 3.0,
+                  color: AppTheme.isDarkMode()
+                      ? Colors.white.withOpacity(0.8)
+                      : accentColor.withOpacity(0.8)
+              )
+              : null,
           borderRadius: BorderRadius.circular(16.0),
           boxShadow: [
             BoxShadow(
@@ -254,12 +262,14 @@ class SearchTreeWidget extends HookConsumerWidget {
             ),
             Expanded(
               child: pageThumbnail == null? Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(16.0),
                       bottomRight: Radius.circular(16.0)
                   ),
-                  color: Color(0xFFEFF5FA), //TODO: ちゃんとする
+                  color: AppTheme.isDarkMode()
+                      ? const Color(0xFF333333)
+                      : const Color(0xFFEFF5FA),
                 ),
                 child: const Center(
                   child: Icon(Icons.public, color: Color(0xFF7D858B),),
@@ -300,8 +310,8 @@ class _CardLabelHome extends StatelessWidget {
           gradient: LinearGradient(
             begin: FractionalOffset.topLeft,
             end: FractionalOffset.bottomRight,
-            colors: [accentColor, Color(0xFF6a11cb)],
-            stops: [0.0, 1.0],
+            colors: [accentColor, const Color(0xFF6a11cb)],
+            stops: const [0.0, 1.0],
           ),
           borderRadius: BorderRadius.circular(40.0)
       ),
@@ -320,31 +330,3 @@ class _CardLabelHome extends StatelessWidget {
     );
   }
 }
-
-
-class _CardLabelCurrentPage extends StatelessWidget {
-  const _CardLabelCurrentPage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFEFF5FA), //TODO: ちゃんとした色にする
-        borderRadius: BorderRadius.circular(40.0)
-      ),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-        child: Text(
-          '現在のページ',
-          style: TextStyle(
-            color: Color(0xFF7D858B),
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            height: 1.0
-          ),
-        ),
-      ),
-    );
-  }
-}
-
