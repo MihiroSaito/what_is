@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
+import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/config/theme.dart';
 import 'package:what_is/src/controllers/search_tree_controller.dart';
 import 'package:what_is/src/providers/display_web_page_index_provider.dart';
@@ -138,8 +140,12 @@ class SearchTreeWidget extends HookConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _card(ref, searchTreeId),
-
+          _Card(
+              id: searchTreeId,
+              isHomeCard: isHomeCard,
+              title: title,
+              pageThumbnail: pageThumbnail
+          ),
           Padding(
             padding: const EdgeInsets.only(left: 40.0),
             child: Container(
@@ -168,131 +174,6 @@ class SearchTreeWidget extends HookConsumerWidget {
     );
   }
 
-  Widget labelIfNeed() {
-    if (isHomeCard) {
-      return const _CardLabelHome();
-    } else {
-      return const SizedBox.shrink();
-    }
-  }
-
-  Widget _card(WidgetRef ref, int id) {
-    return GestureDetector(
-      onTap: () {
-        AppNavigator().pop();
-        ref.read(displayWebPageIndexProvider.notifier).change(index: id);
-      },
-      child: Container(
-        width: 340,
-        height: 170,
-        decoration: BoxDecoration(
-          color: AppTheme.isDarkMode()
-              ? AppTheme.darkColor2
-              : Colors.white,
-          border: id == ref.watch(displayWebPageTreeIdProvider)
-              ? Border.all(
-                  width: 3.0,
-                  color: AppTheme.isDarkMode()
-                      ? Colors.white.withOpacity(0.8)
-                      : accentColor.withOpacity(0.8)
-              )
-              : null,
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                offset: const Offset(0.0, 4.0),
-                blurRadius: 24.0
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    labelIfNeed(),
-
-                    const SizedBox(height: 8.0,),
-
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            height: 1.5
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 8.0,),
-
-                    Row(
-                      children: [
-                        Container(
-                          height: 24.0,
-                          width: 24.0,
-                          decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                //TODO: ちゃんとした画像使う
-                                  image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqTcH9zNA5--jcBmb3fBuZ8RMpZSgX-EuUdKAm37L9EfpljQ1C_bQ8j3Xdf0tqOohP5Cw&usqp=CAU'),
-                                  fit: BoxFit.cover,
-                                  filterQuality: FilterQuality.medium
-                              )
-                          ),
-                        ),
-                        const SizedBox(width: 6.0,),
-                        Text(
-                          'Google$id', //TODO: ちゃんとしたサイト名使う
-                          style: const TextStyle(
-                              fontSize: 12
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: pageThumbnail == null? Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(16.0),
-                      bottomRight: Radius.circular(16.0)
-                  ),
-                  color: AppTheme.isDarkMode()
-                      ? AppTheme.darkColor1
-                      : AppTheme.lightColor1,
-                ),
-                child: const Center(
-                  child: Icon(Icons.public, color: Color(0xFF7D858B),),
-                ),
-              ) : Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(16.0),
-                      bottomRight: Radius.circular(16.0)
-                  ),
-                  image: DecorationImage( //TODO: ちゃんとする
-                    image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuonttDVUIaT7bH-QRsQbT_jUHBjVPlOuOJUS8JMWvjp5D8qtljXIILivwyU7a_f-ot8Q&usqp=CAU'),
-                    fit: BoxFit.cover,
-                    filterQuality: FilterQuality.medium
-                  )
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 
@@ -330,3 +211,182 @@ class _CardLabelHome extends StatelessWidget {
     );
   }
 }
+
+
+
+class _Card extends HookConsumerWidget {
+  const _Card({
+    required this.id,
+    required this.isHomeCard,
+    required this.title,
+    required this.pageThumbnail
+  });
+
+  final int id;
+  final bool isHomeCard;
+  final String title;
+  final ImageProvider? pageThumbnail;
+
+  Widget labelIfNeed() {
+    if (isHomeCard) {
+      return const _CardLabelHome();
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        AppNavigator().pop();
+        ref.read(displayWebPageIndexProvider.notifier).change(index: id);
+      },
+      child: Stack(
+        children: [
+          Container(
+            width: 340,
+            height: 170,
+            decoration: BoxDecoration(
+              color: AppTheme.isDarkMode()
+                  ? AppTheme.darkColor2
+                  : Colors.white,
+              border: id == ref.watch(displayWebPageTreeIdProvider)
+                  ? Border.all(
+                  width: 3.0,
+                  color: AppTheme.isDarkMode()
+                      ? Colors.white.withOpacity(0.8)
+                      : accentColor.withOpacity(0.8)
+              )
+                  : null,
+              borderRadius: BorderRadius.circular(16.0),
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    offset: const Offset(0.0, 4.0),
+                    blurRadius: 24.0
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        labelIfNeed(),
+
+                        const SizedBox(height: 8.0,),
+
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.bold,
+                                height: 1.5
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 8.0,),
+
+                        Row(
+                          children: [
+                            Container(
+                              height: 24.0,
+                              width: 24.0,
+                              decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    //TODO: ちゃんとした画像使う
+                                      image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqTcH9zNA5--jcBmb3fBuZ8RMpZSgX-EuUdKAm37L9EfpljQ1C_bQ8j3Xdf0tqOohP5Cw&usqp=CAU'),
+                                      fit: BoxFit.cover,
+                                      filterQuality: FilterQuality.medium
+                                  )
+                              ),
+                            ),
+                            const SizedBox(width: 6.0,),
+                            Text(
+                              'Google$id', //TODO: ちゃんとしたサイト名使う
+                              style: const TextStyle(
+                                  fontSize: 12
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: pageThumbnail == null? Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(16.0),
+                          bottomRight: Radius.circular(16.0)
+                      ),
+                      color: AppTheme.isDarkMode()
+                          ? AppTheme.darkColor1
+                          : AppTheme.lightColor1,
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.public, color: Color(0xFF7D858B),),
+                    ),
+                  ) : Container(
+                    decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(16.0),
+                            bottomRight: Radius.circular(16.0)
+                        ),
+                        image: DecorationImage( //TODO: ちゃんとする
+                            image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuonttDVUIaT7bH-QRsQbT_jUHBjVPlOuOJUS8JMWvjp5D8qtljXIILivwyU7a_f-ot8Q&usqp=CAU'),
+                            fit: BoxFit.cover,
+                            filterQuality: FilterQuality.medium
+                        )
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SquishyButton(
+              disableWidget: const SizedBox.shrink(),
+              padding: const EdgeInsets.all(10.0),
+              onTap: () {
+                SearchTreeController().removeSearchTreeIfConfirmationOK(ref,
+                    targetTreeId: id, isHome: isHomeCard);
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black.withOpacity(0.8)
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: const Center(
+                  child: Icon(
+                    CupertinoIcons.xmark,
+                    size: 16.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+
+

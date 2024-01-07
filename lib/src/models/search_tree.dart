@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/models/search_web_page.dart';
 
 /// 検索情報を親子兄弟で紐づけておくためのクラス

@@ -38,7 +38,10 @@ class SearchTreeNotifier extends AutoDisposeNotifier<SearchTree?> {
     state = wholeSearchTree;
   }
 
-  //TODO: 特定のサーチツリーを削除できるようにしたい。
+
+  void remove(int parentTreeId) {
+
+  }
 
 }
 

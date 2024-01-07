@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/models/search_tree.dart';
 import 'package:what_is/src/models/search_web_page.dart';
@@ -43,7 +44,8 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
             webViewWidget: AppWebView(
                 initialUrl: initialUrl,
                 searchTreeId: SearchTree.generateTreeId(newIndexedStackIndex))
-        ));
+        ),
+    );
     ref.read(searchTreeProvider.notifier).add(
         parentTreeId: parentTreeId,
         newSearchTree: newSearchTree

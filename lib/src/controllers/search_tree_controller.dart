@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:what_is/main.dart';
+import 'package:what_is/src/components/confirm_delete_dialog_widget.dart';
+import 'package:what_is/src/providers/device_size_provider.dart';
+import 'package:what_is/src/providers/search_tree_provider.dart';
 
 import '../models/search_tree.dart';
 import '../views/search_tree_screen.dart';
@@ -20,6 +25,29 @@ class SearchTreeController {
         return createSearchTreeWidget(child);
       }).toList(),
     );
+  }
+
+
+  Future<void> removeSearchTreeIfConfirmationOK(WidgetRef ref, {
+    required int targetTreeId,
+    required bool isHome
+  }) async {
+    final ok = await _canDeleteCard();
+    if (ok == false) return;
+    //TODO: OKだったら指定したツリーとその配下を全て消す。
+    //TODO: もしHomeカードを消したなら、searchViewも閉じる。
+    // ref.read(searchTreeProvider.notifier).remove(targetTreeId);
+  }
+
+
+  Future<bool> _canDeleteCard() async {
+    return await showDialog(
+        context: App.navigatorKey.currentContext!,
+        useRootNavigator: true,
+        builder: (_) {
+          return const ConfirmDeleteDialogWidget();
+        }
+    ) ?? false;
   }
 
 }

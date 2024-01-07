@@ -2,9 +2,7 @@ import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:what_is/src/components/app_header.dart';
 import 'package:what_is/src/components/suggest_transplate_toast_widget.dart';
-import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
 
 import '../../main.dart';
 
