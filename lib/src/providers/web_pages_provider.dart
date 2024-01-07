@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/models/search_tree.dart';
 import 'package:what_is/src/models/search_web_page.dart';
+import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
 import 'package:what_is/src/views/webivew.dart';
 
 import '../utils/util.dart';

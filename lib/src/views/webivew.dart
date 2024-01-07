@@ -103,6 +103,7 @@ class AppWebView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
 
     final isLoadingNotifier = ref.watch(isLoadingWebViewProvider.notifier);
+    ref.watch(translationConfirmedPageListProvider);
 
     return InAppWebView(
       initialUrlRequest: URLRequest(url: initialUrl),

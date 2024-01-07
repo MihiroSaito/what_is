@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/controllers/suggest_translate_controller.dart';
@@ -39,27 +40,34 @@ class WebViewController {
     required WebUri uri
   }) async {
     // WebView内でJavaScriptを実行して言語情報を取得
-    String script = '''
+    const script = '''
               var lang = document.documentElement.lang;
               lang;
             ''';
-    final language = await controller.evaluateJavascript(source: script);
+    final String language = await controller.evaluateJavascript(source: script) ?? "";
 
-    // 翻訳するかすでに確認しているサイトの場合スキップする
-    if (ref.watch(translationConfirmedPageListProvider).contains(uri.toString())){
+    debugPrint('site language: $language');
+
+    final translateSiteUrl = 'https://translate.google.com/translate?sl=auto&tl=ja&hl=ja&u=$uri';
+
+    // 何も取得できなかった OR 翻訳するかすでに確認しているサイトの場合スキップする
+    final list = ref.watch(translationConfirmedPageListProvider);
+    if (language.isEmpty || list.contains(uri.toString()) || list.contains(translateSiteUrl)){
       return;
     }
-    if (language != 'ja') {
+
+    if (!language.contains('ja')) {
       //TODO: 自動翻訳するかどうかで処理を変える。
       SuggestTranslateController.show(ref,
         onEnabled: (alwaysEnabled) {
           //TODO: 次回から自動保存する設定にする。
           controller.loadUrl(urlRequest: URLRequest(
-              url: WebUri('https://translate.google.com/translate?sl=auto&tl=ja&hl=ja&u=$uri')
+              url: WebUri(translateSiteUrl)
           ));
         }
       );
       ref.read(translationConfirmedPageListProvider.notifier).add(uri.toString());
+      ref.read(translationConfirmedPageListProvider.notifier).add(translateSiteUrl); // 翻訳済みサイトのURLも念の為。
     }
 
   }

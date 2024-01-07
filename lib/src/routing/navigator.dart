@@ -6,6 +6,7 @@ import 'package:what_is/src/providers/display_web_page_index_provider.dart';
 import 'package:what_is/src/providers/display_web_page_tree_id_provider.dart';
 import 'package:what_is/src/providers/loading_webview_provider.dart';
 import 'package:what_is/src/providers/search_tree_provider.dart';
+import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
 import 'package:what_is/src/providers/webview_controllers_provider.dart';
 import 'package:what_is/src/views/search_tree_screen.dart';
 
@@ -46,6 +47,7 @@ class AppNavigator {
       ref.invalidate(displayWebPageTreeIdProvider);
       ref.invalidate(displayWebPageIndexProvider);
       ref.invalidate(contextMenuProvider);
+      ref.invalidate(translationConfirmedPageListProvider);
       Navigator.pop(searchViewContext!);
     }
   }
