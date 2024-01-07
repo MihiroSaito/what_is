@@ -11,8 +11,8 @@ import 'package:what_is/src/routing/navigator.dart';
 import '../components/text_button.dart';
 
 
-class SearchTreePage extends HookConsumerWidget {
-  const SearchTreePage({super.key});
+class SearchTreeScreen extends HookConsumerWidget {
+  const SearchTreeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -187,7 +187,7 @@ class SearchTreeWidget extends HookConsumerWidget {
         height: 170,
         decoration: BoxDecoration(
           color: AppTheme.isDarkMode()
-              ? const Color(0xFF232425)
+              ? AppTheme.darkColor2
               : Colors.white,
           border: id == ref.watch(displayWebPageTreeIdProvider)
               ? Border.all(
@@ -248,9 +248,9 @@ class SearchTreeWidget extends HookConsumerWidget {
                           ),
                         ),
                         const SizedBox(width: 6.0,),
-                        const Text(
-                          'Google', //TODO: ちゃんとしたサイト名使う
-                          style: TextStyle(
+                        Text(
+                          'Google$id', //TODO: ちゃんとしたサイト名使う
+                          style: const TextStyle(
                               fontSize: 12
                           ),
                         )
@@ -268,8 +268,8 @@ class SearchTreeWidget extends HookConsumerWidget {
                       bottomRight: Radius.circular(16.0)
                   ),
                   color: AppTheme.isDarkMode()
-                      ? const Color(0xFF333333)
-                      : const Color(0xFFEFF5FA),
+                      ? AppTheme.darkColor1
+                      : AppTheme.lightColor1,
                 ),
                 child: const Center(
                   child: Icon(Icons.public, color: Color(0xFF7D858B),),

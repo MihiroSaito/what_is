@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:what_is/src/views/home.dart';
+import 'package:what_is/src/views/home_screen.dart';
 import 'package:what_is/src/config/theme.dart';
 
 import 'firebase_options.dart';
@@ -46,7 +46,7 @@ class App extends StatelessWidget {
         DefaultCupertinoLocalizations.delegate
       ],
       navigatorKey: navigatorKey,
-      home: const Home(),
+      home: const HomeScreen(),
     );
   }
 }

@@ -51,6 +51,7 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
     return newSearchTree.searchWebPage;
   }
 
+
   /// 指定したIndexのWebViewを削除する
   // void remove(int Index) {
   //   ref.watch(searchTreeProvider.notifier).reBuild(searchTree);

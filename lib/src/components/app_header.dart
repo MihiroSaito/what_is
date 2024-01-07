@@ -13,6 +13,7 @@ import 'package:what_is/src/routing/navigator.dart';
 import '../config/const.dart';
 import '../config/theme.dart';
 
+
 class AppHeader extends HookConsumerWidget {
   const AppHeader({super.key});
 
@@ -44,6 +45,18 @@ class AppHeader extends HookConsumerWidget {
                 ),
                 const Spacer(),
                 if (webPages.isNotEmpty)
+                  SquishyButton(
+                    onTap: () {
+                      AppNavigator.popSearchView(ref);
+                    },
+                    disableWidget: const SizedBox.shrink(),
+                    child: const Icon(
+                      CupertinoIcons.house_alt,
+                      size: 28,
+                    ),
+                  ),
+                const SizedBox(width: 16.0,),
+                if (webPages.isNotEmpty)
                   AppAnimation.scale(
                     duration: webPages.length == 1? Duration.zero : const Duration(milliseconds: 400),
                     key: scaleKey.value, //初回or値が変わってbuildされた時のみアニメーションする
@@ -52,7 +65,7 @@ class AppHeader extends HookConsumerWidget {
                       child: SquishyButton(
                         disableWidget: const SizedBox.shrink(),
                         onTap: () {
-                          AppNavigator().tpSearchTreePage();
+                          AppNavigator().toSearchTreePage();
                         },
                         child: Stack(
                           children: [
@@ -174,20 +187,6 @@ class AppHeader extends HookConsumerWidget {
                           //TODO: 検索履歴を表示する。
                         }
                     ),
-
-
-                    if (ref.watch(webPagesProvider).isNotEmpty)
-                      ...[
-                        _line(context),
-                        _item(context,
-                            label: '今の検索をやめる',
-                            textRed: true,
-                            onTap: () {
-                              //TODO: 初期画面に戻る
-                            }
-                        ),
-                      ],
-
                     _line(context, bold: true),
                     _item(context, label: 'お問い合わせ',
                         onTap: () {

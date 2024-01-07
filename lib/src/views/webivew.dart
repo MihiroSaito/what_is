@@ -2,16 +2,20 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:what_is/src/providers/search_tree_provider.dart';
+import 'package:what_is/src/controllers/suggest_translate_controller.dart';
+import 'package:what_is/src/controllers/webview_controller.dart';
+import 'package:what_is/src/providers/display_web_page_tree_id_provider.dart';
+import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
 
 import '../../main.dart';
 import '../providers/content_menu_provider.dart';
-import '../providers/current_webview_controller_provider.dart';
+import '../providers/webview_controllers_provider.dart';
 import '../providers/display_web_page_index_provider.dart';
 import '../providers/loading_webview_provider.dart';
 import '../providers/web_pages_provider.dart';
@@ -25,7 +29,15 @@ class SearchViewWidget extends HookConsumerWidget {
 
     final webPages = ref.watch(webPagesProvider);
     final displayWebPageIndex = ref.watch(displayWebPageIndexProvider);
-    final currentWebViewController = ref.watch(currentWebViewControllerProvider);
+    final currentWebViewController = ref.watch(specificWebViewControllerProvider(ref.watch(displayWebPageTreeIdProvider)));
+
+    //ページを戻ったり進んだりするとずっとローディングになってしまう問題の対策
+    void checkNowLoading() {
+      Future.delayed(const Duration(milliseconds: 200), () async {
+        final isLoading = await currentWebViewController?.isLoading() ?? false;
+        ref.read(isLoadingWebViewProvider.notifier).state = isLoading;
+      });
+    }
 
     return Stack(
       children: [
@@ -45,13 +57,27 @@ class SearchViewWidget extends HookConsumerWidget {
               ),
             ),
             WebViewBottomBar(
-              onGoBack: () => currentWebViewController?.goBack(),
-              onGoForward: () => currentWebViewController?.goForward(),
+              onGoBack: () async {
+                await currentWebViewController?.goBack();
+                checkNowLoading();
+                SuggestTranslateController.pop();
+              },
+              onGoForward: () {
+                currentWebViewController?.goForward();
+                checkNowLoading();
+                SuggestTranslateController.pop();
+              },
               onShare: () async {
                 final url = await currentWebViewController?.getOriginalUrl();
-                if (url != null) await Share.share(url.toString());
+                if (url != null) await Share.share(url.toString()); //TODO: できたらURLをテキストではなくWebサイトのように共有したい
               },
-              onReload: () => currentWebViewController?.reload(),
+              onReload: () async {
+                currentWebViewController?.reload();
+                final url = await currentWebViewController?.getOriginalUrl();
+                if (url == null) return;
+                // すでに翻訳するか確認していた場合、再度確認する。
+                ref.read(translationConfirmedPageListProvider.notifier).remove(url.toString());
+              },
             ),
           ],
         ),
@@ -71,7 +97,7 @@ class AppWebView extends HookConsumerWidget {
   });
 
   final WebUri initialUrl;
-  final int? searchTreeId;
+  final int searchTreeId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,16 +109,39 @@ class AppWebView extends HookConsumerWidget {
       initialSettings: InAppWebViewSettings(
         transparentBackground: true,
         javaScriptEnabled: true,
+        allowsLinkPreview: false,
       ),
       contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
       onLoadStart: (_, __) => isLoadingNotifier.state = true,
-      onLoadStop: (_, __) => isLoadingNotifier.state = false, //TODO: ブラウザバックした時に再ロードするが止まってくれないためどうにか対処する
+      onLoadStop: (controller, uri) async {
+        isLoadingNotifier.state = false;
+        if (uri == null) return;
+        WebViewController().translateIfNeeded(ref, controller: controller, uri: uri);
+      },
       onWebViewCreated: (controller) {
-        ref.read(currentWebViewControllerProvider.notifier).update(controller);
+        ref.read(webViewControllersProvider.notifier).add(
+            (searchTreeId: searchTreeId, controller: controller));
       },
       onUpdateVisitedHistory: (controller, __, ___) async {
         //TODO: 閲覧履歴を取得してデータ活用にする。
       },
+
+      shouldOverrideUrlLoading: (_, __) async {
+        return NavigationActionPolicy.ALLOW; //deeplinkで勝手にアプリが開いてしまう問題の対処
+      },
+      // shouldOverrideUrlLoading: (controller, navigationAction) async {
+      //   final currentUrl = (await controller.getUrl());
+      //   if (currentUrl.toString() == initialUrl.toString()) {
+      //     return NavigationActionPolicy.ALLOW;
+      //   }
+      //   if (navigationAction.isForMainFrame) {
+      //     return WebViewController().checkLink(ref,
+      //         currentUrl: currentUrl.toString(),
+      //         requestUrl: navigationAction.request.url.toString());
+      //   } else {
+      //     return NavigationActionPolicy.ALLOW;
+      //   }
+      // },
     );
   }
 }

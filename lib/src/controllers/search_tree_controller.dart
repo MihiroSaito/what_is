@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/search_tree.dart';
-import '../views/search_tree.dart';
+import '../views/search_tree_screen.dart';
 
 
 class SearchTreeController {

@@ -40,10 +40,6 @@ class SearchTreeNotifier extends AutoDisposeNotifier<SearchTree?> {
 
   //TODO: 特定のサーチツリーを削除できるようにしたい。
 
-  /// サーチツリーを削除する。
-  /// 新たに検索しなおしたい時に利用する
-  void clear() => state = null;
-
 }
 
 

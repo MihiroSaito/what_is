@@ -6,12 +6,12 @@ import 'package:what_is/src/config/theme.dart';
 import 'package:what_is/src/providers/app_lifecycle_provider.dart';
 import 'package:what_is/src/routing/navigator.dart';
 
-import '../components/header.dart';
+import '../components/app_header.dart';
 import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   static final viewKey = GlobalKey();
 
@@ -43,7 +43,7 @@ class Home extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
                         decoration: BoxDecoration(
                             color: AppTheme.isDarkMode()
-                                ? const Color(0xFF232425)
+                                ? AppTheme.darkColor2
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(16.0),
                             boxShadow: [
@@ -58,7 +58,7 @@ class Home extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             color: AppTheme.isDarkMode()
-                                ? const Color(0xFF333333)
+                                ? AppTheme.darkColor1
                                 : const Color(0xFFF7F8FB),
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -87,11 +87,13 @@ class Home extends StatelessWidget {
                                 color: Theme.of(context).textTheme.bodyMedium!.color
                             ),
                             textInputAction: TextInputAction.search,
-
                             cursorColor: accentColor,
                             onSubmitted: (text) {
                               if (text.isEmpty) return;
-                              AppNavigator().toSearchView(pageContext, ref, searchText: text);
+                              AppNavigator.toSearchView(pageContext, ref, searchText: text);
+                              Future.delayed(const Duration(milliseconds: 300), () {
+                                textController.clear();
+                              });
                             },
                           ),
                         ),

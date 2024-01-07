@@ -1,18 +1,18 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/providers/display_web_page_index_provider.dart';
-import 'package:what_is/src/providers/search_tree_provider.dart';
 
-import 'current_webview_controller_provider.dart';
+import 'webview_controllers_provider.dart';
 import 'web_pages_provider.dart';
 
 
-final contextMenuProvider = Provider.autoDispose.family<ContextMenu, int?>((ref, currentTreeId) {
+final contextMenuProvider = Provider.autoDispose.family<ContextMenu, int>((ref, currentTreeId) {
   return ContextMenu(
     menuItems: [
 
       ContextMenuItem(id: 1, title: "さらに検索", action: () async {
-        final selectedText = await ref.watch(currentWebViewControllerProvider)?.getSelectedText();
+        final currentWebViewController = ref.watch(specificWebViewControllerProvider(currentTreeId));
+        final selectedText = await currentWebViewController?.getSelectedText();
         if (selectedText == null) return;
         final newPage = ref.read(webPagesProvider.notifier).add(
             parentTreeId: currentTreeId,
@@ -21,7 +21,8 @@ final contextMenuProvider = Provider.autoDispose.family<ContextMenu, int?>((ref,
       }),
 
       ContextMenuItem(id: 2, title: "あとで検索", action: () async {
-        final selectedText = await ref.watch(currentWebViewControllerProvider)?.getSelectedText();
+        final currentWebViewController = ref.watch(specificWebViewControllerProvider(currentTreeId));
+        final selectedText = await currentWebViewController?.getSelectedText();
         if (selectedText == null) return;
         ref.read(webPagesProvider.notifier).add(
             parentTreeId: currentTreeId,

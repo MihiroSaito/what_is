@@ -20,7 +20,7 @@ class SearchByClipboardTextToastWidget extends StatelessWidget {
   Widget build(_) {
 
     final textColor = AppTheme.isDarkMode()
-        ? const Color(0xFF333333) : Colors.white;
+        ? AppTheme.darkColor1 : Colors.white;
 
     return Center(
       child: SquishyButton(
@@ -104,10 +104,10 @@ class SearchByClipboardUrlToastWidget extends StatelessWidget {
                   ? Colors.white : accentColor.withOpacity(0.5)
               ),
               color: AppTheme.isDarkMode()
-                  ? const Color(0xFF232425) : Colors.white,
+                  ? AppTheme.darkColor2 : Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: accentColor.withOpacity(0.03),
+                  color: accentColor.withOpacity(0.1),
                   blurRadius: 16.0,
                 )
               ]
@@ -124,8 +124,8 @@ class SearchByClipboardUrlToastWidget extends StatelessWidget {
                     bottomLeft: Radius.circular(16.0),
                   ),
                   color: AppTheme.isDarkMode()
-                      ? const Color(0xFF333333)
-                      : const Color(0xFFEFF5FA),
+                      ? AppTheme.darkColor1
+                      : AppTheme.lightColor1,
                 ),
                 child: const Center(
                   child: Icon(Icons.public, color: Color(0xFF7D858B),),

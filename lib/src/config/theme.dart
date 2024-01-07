@@ -23,7 +23,7 @@ class AppTheme {
 
 
   static final dark = ThemeData(
-    scaffoldBackgroundColor: const Color(0xFF0B0F12),
+    scaffoldBackgroundColor: darkColor3,
     textTheme: const TextTheme(
         bodyMedium: TextStyle(
             color: Colors.white
@@ -45,5 +45,13 @@ class AppTheme {
     var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
     return brightness == Brightness.dark;
   }
+
+
+
+  static const darkColor1 = Color(0xFF333333);
+  static const darkColor2 = Color(0xFF232425);
+  static const darkColor3 = Color(0xFF0B0F12);
+
+  static const lightColor1 = Color(0xFFEFF5FA);
 
 }
