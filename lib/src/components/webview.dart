@@ -97,8 +97,11 @@ class AppWebView extends HookConsumerWidget {
             instance.translateIfNeeded(controller: controller, uri: uri);
           },
           onReceivedError: (_, __, webResourceError) {
-            errorMessage.value = webResourceError.description;
-            isLoadingNotifier.state = false;
+            if (webResourceError.type != WebResourceErrorType.CANCELLED) {
+              debugPrint(webResourceError.type.toString());
+              errorMessage.value = webResourceError.description;
+              isLoadingNotifier.state = false;
+            }
           },
           onWebViewCreated: (controller) {
             ref.read(webViewControllersProvider.notifier).add(
