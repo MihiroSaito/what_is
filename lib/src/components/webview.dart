@@ -18,48 +18,62 @@ class AppWebView extends HookConsumerWidget {
   const AppWebView({
     super.key,
     required this.initialUrl,
-    required this.searchTreeId
+    required this.searchTreeId,
+    required this.hasSearchWord
   });
 
   final WebUri initialUrl;
   final int searchTreeId;
 
+  /// 検索ワードがある = URL直アクセスではない
+  final bool hasSearchWord;
 
   /// ユーザーがURLリクエストを送った時に行う処理
   NavigationActionPolicy shouldOverrideUrlLoadingProcess({
     required NavigationAction navigationAction,
-    required ValueNotifier<WebUri> lastRequestUrl,
+    required ValueNotifier<WebUri> lastRequestPageUrl,
     required WebViewController webViewController,
-    required ValueNotifier<WebUri> currentUrl
+    required ValueNotifier<WebUri> currentPageUrl,
+    required bool hasSearchWord
   }) {
+    // メインフレーム（画面全体を読み込む時 = 新規ページへのアクセス）以外のリクエストは特に何もしない。
+    if (!navigationAction.isForMainFrame) return NavigationActionPolicy.ALLOW;
+
     final requestUrl = navigationAction.request.url;
-    if (requestUrl == null || lastRequestUrl.value == requestUrl) {
+
+    //TODO: ホームでの処理なら、Google検索結果画面で再度Google検索していないか確認する、していたらSearchViewを閉じ再度アプリ上で検索する
+
+    // リクエストURLがnull、または最後のメインフレームへのアクセスと現在のメインフレームへのアクセスでURLが一致していたら何もしない。1回のページ遷移時に同じURLリクエストが2回きてしまうことがあるためそれの回避
+    if (requestUrl == null || lastRequestPageUrl.value == requestUrl) {
       return NavigationActionPolicy.ALLOW;
     }
+    lastRequestPageUrl.value = requestUrl;
 
+    // 画面遷移のタイプがないことはほとんどなさそうだが、そんな時は特に何もしない。
     final navigationType = navigationAction.navigationType;
     if (navigationType == null) return NavigationActionPolicy.ALLOW;
 
-    lastRequestUrl.value = requestUrl; // 1回のページ遷移時に同じURLリクエストが2回きてしまうことがあるためそれの回避
-
-    if ([
-      NavigationType.BACK_FORWARD,
-      NavigationType.RELOAD,
-      NavigationType.OTHER,
-    ].contains(navigationType)) {
-      // ユーザーが「戻る/進む」or「リロード」or「不明なアクション」を行った時はスキップする。
-      currentUrl.value = requestUrl;
+    // ユーザーが「戻る/進む」を行った時は何もしない。ただし、ページURLは切り替わるため「現在のページURL」を変更する
+    if (navigationType == NavigationType.BACK_FORWARD) {
+      currentPageUrl.value = requestUrl;
       return NavigationActionPolicy.ALLOW;
     }
 
-    final navigationActionPolicy = webViewController.moreSearchIfNeeded(
-        initialUrl: initialUrl.toString(),
-        currentUrl: currentUrl.value.toString(),
-        requestUrl: navigationAction.request.url.toString(),
-        currentTreeId: searchTreeId);
+    //TODO: リダイレクトに対応できないため、仕様を変更する
 
+    //TODO: Androidで戻るボタンを押した時の処理が必要になるかも
+
+    // 「さらに検索」が必要なアクセスなら実行する。hasSearchWordがある = URL直アクセスではない ため初回の「さらに検索」はスキップする
+    final navigationActionPolicy = webViewController.moreSearchIfNeeded(
+        initialPageUrl: initialUrl.toString(),
+        currentPageUrl: currentPageUrl.value.toString(),
+        requestPageUrl: navigationAction.request.url.toString(),
+        currentTreeId: searchTreeId,
+        skipInitNavigation: hasSearchWord);
+
+    // このWebViewでの画面遷移が行われるなら、ページURLが切り替わるため「現在のページURL」を変更する
     if (navigationActionPolicy == NavigationActionPolicy.ALLOW) {
-      currentUrl.value = requestUrl;
+      currentPageUrl.value = requestUrl;
     }
 
     return navigationActionPolicy;
@@ -97,8 +111,9 @@ class AppWebView extends HookConsumerWidget {
             instance.translateIfNeeded(controller: controller, uri: uri);
           },
           onReceivedError: (_, __, webResourceError) {
+            // リロードしまくったり素早くブラウザバックした時に起こるエラーは無視
             if (webResourceError.type != WebResourceErrorType.CANCELLED) {
-              debugPrint(webResourceError.type.toString());
+              debugPrint('webResourceError.type: ${webResourceError.type}');
               errorMessage.value = webResourceError.description;
               isLoadingNotifier.state = false;
             }
@@ -113,9 +128,10 @@ class AppWebView extends HookConsumerWidget {
           shouldOverrideUrlLoading: (controller, navigationAction) async {
             return shouldOverrideUrlLoadingProcess(
                 navigationAction: navigationAction,
-                lastRequestUrl: lastRequestUrl,
+                lastRequestPageUrl: lastRequestUrl,
                 webViewController: instance,
-                currentUrl: currentUrl);
+                currentPageUrl: currentUrl,
+                hasSearchWord: hasSearchWord);
 
           },
         ),

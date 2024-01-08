@@ -41,7 +41,9 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
             initUrl: initialUrl.toString(),
             webViewWidget: AppWebView(
                 initialUrl: initialUrl,
-                searchTreeId: SearchTree.generateTreeId(newIndexedStackIndex))
+                searchTreeId: SearchTree.generateTreeId(newIndexedStackIndex),
+                hasSearchWord: !isUrl,
+            )
         ),
     );
     ref.read(searchTreeProvider.notifier).add(

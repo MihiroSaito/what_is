@@ -38,7 +38,7 @@ class SearchByClipBoardController {
 
   static bool _isURL(String text) {
     try {
-      final isAbsolute = Uri.parse(text).isAbsolute;
+      final isAbsolute = Uri.parse(text).hasAbsolutePath; //TODO: ここちゃんとできているか確認する
       return isAbsolute;
     } catch (e) {
       return false;

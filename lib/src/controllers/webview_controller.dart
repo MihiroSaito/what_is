@@ -15,27 +15,28 @@ class WebViewController {
 
   /// 「さらに検索」機能の実行が必要だったら行う。不要だったらWebViewの挙動にしたがって画面遷移する。
   NavigationActionPolicy moreSearchIfNeeded( {
-    required String initialUrl,
-    required String currentUrl,
-    required String requestUrl,
+    required String initialPageUrl, // WebViewを開いた時の初めてのアクセスURL
+    required String currentPageUrl, // 現在表示中のWebページのURL
+    required String requestPageUrl, // 次にメインフレームに対してリクエストされるURL
+    required bool skipInitNavigation, // webview内の初回のページ遷移をスキップするか？
     required int currentTreeId,
   }) {
 
-    final uri1 = Uri.parse(initialUrl);
-    final uri2 = Uri.parse(currentUrl);
-    final uri3 = Uri.parse(requestUrl);
+    final uri1 = Uri.parse(initialPageUrl);
+    final uri2 = Uri.parse(currentPageUrl);
+    final uri3 = Uri.parse(requestPageUrl);
 
-    // 最初のGoogle検索からの遷移はWebViewの挙動にしたがって画面遷移する。
-    if (_arePathsEqual(uri1, uri2)) return NavigationActionPolicy.ALLOW;
+    // WebViewを開いた時の初めてのアクセスページ と 現在表示中のWebページのパスが一致いる = 現在しているワードと関係あるの場合は「さらに検索」は実行しない。
+    if (_arePathsEqual(uri1, uri2) && skipInitNavigation) return NavigationActionPolicy.ALLOW;
 
 
     /// デバッグ時に便利なため残しとく。
-    // print('==============================');
-    // print('initialUrl: $uri1');
-    // print('currentUrl: $uri2');
-    // print('requestUrl: $uri3');
-    // print('currentUrlとrequestUrlのパスが同じ${_arePathsEqual(uri2, uri3)}');
-    // print('==============================');
+    print('==============================');
+    print('initialUrl: $uri1');
+    print('currentUrl: $uri2');
+    print('requestUrl: $uri3');
+    print('currentUrlとrequestUrlのパスが同じ${_arePathsEqual(uri2, uri3)}');
+    print('==============================');
 
     // URLパスが同じ = 現在のページと同じコンテンツのため「さらに検索」機能に実行をスキップする
     if (_arePathsEqual(uri2, uri3)) {
@@ -43,7 +44,7 @@ class WebViewController {
     } else {
       moreSearch(
           currentTreeId: currentTreeId,
-          searchWordOrUrl: requestUrl,
+          searchWordOrUrl: requestPageUrl,
           isUrl: true); // パスが違ったら「さらに検索」機能を使ってページを開く
       return NavigationActionPolicy.CANCEL;
     }

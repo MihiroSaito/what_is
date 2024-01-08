@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
+import 'package:what_is/src/controllers/suggest_translate_controller.dart';
 import 'package:what_is/src/providers/content_menu_provider.dart';
 import 'package:what_is/src/providers/display_web_page_index_provider.dart';
 import 'package:what_is/src/providers/display_web_page_tree_id_provider.dart';
@@ -43,6 +44,7 @@ class AppNavigator {
   /// main画面内の検索画面を終了する。
   static popSearchView(WidgetRef ref) {
     if (searchViewContext == null) return;
+    SuggestTranslateController.pop(); // 念の為popする
     if (searchViewContext!.mounted) {
       ref.invalidate(webPagesProvider);
       ref.invalidate(searchTreeProvider);
