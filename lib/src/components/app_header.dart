@@ -178,7 +178,7 @@ class AppHeader extends HookConsumerWidget {
                   children: [
                     const SizedBox(height: 2.0,),
                     _item(context,
-                        label: '検索履歴',
+                        label: '過去の検索',
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(14.0),
                           topRight: Radius.circular(2.0),
@@ -188,45 +188,19 @@ class AppHeader extends HookConsumerWidget {
                         }
                     ),
                     _line(context, bold: true),
-                    _item(context, label: 'お問い合わせ',
+                    _item(context, label: '設定',
                         onTap: () {
-                          //TODO: お問い合わせフォームへ
+                          //TODO: 設定画面
                         }),
                     _line(context),
-                    _item(context, label: 'アプリを評価する',
-                        onTap: () {
-                          //TODO: Storeへ遷移
-                        }),
-                    _line(context),
-                    _item(context, label: '利用規約',
-                        onTap: () {
-                          launchUrl(Uri.parse(AppConst.termUrl), mode: LaunchMode.externalApplication);
-                          Navigator.pop(context);
-                        }),
-                    _line(context),
-                    _item(context, label: 'プライバシーポリシー',
-                        onTap: () {
-                          launchUrl(Uri.parse(AppConst.privacyPolicy), mode: LaunchMode.externalApplication);
-                          Navigator.pop(context);
-                        }),
-                    _line(context),
-                    _item(context,
-                        label: 'ライセンス情報',
+                    _item(context, label: 'アプリについて',
                         borderRadius: const BorderRadius.only(
                           bottomRight: Radius.circular(14.0),
                           bottomLeft: Radius.circular(14.0),
                         ),
-                        onTap: () async {
-                          final info = await PackageInfo.fromPlatform();
-                          showLicensePage(
-                            context: context,
-                            applicationName: info.appName,
-                            applicationVersion: info.version,
-                            applicationIcon: SizedBox(
-                                height: 72,
-                                width: 72,
-                                child: Image.asset('assets/images/icon_transparent_mini.png')),
-                          );
+                        onTap: () {
+                          Navigator.pop(context);
+                          AppNavigator().toAboutAppScreen();
                         }
                     ),
                     const SizedBox(height: 2.0,),

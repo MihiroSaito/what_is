@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/main.dart';
@@ -12,6 +13,7 @@ import 'package:what_is/src/views/search_tree_screen.dart';
 
 import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
+import '../views/about_app_screen.dart';
 import '../views/webivew.dart';
 
 
@@ -55,11 +57,20 @@ class AppNavigator {
 
 
   void toSearchTreePage() {
-    App.navigatorKey.currentState?.push(
+    App.navigatorKey.currentState!.push(
         MaterialPageRoute(builder: (_) {
           return const SearchTreeScreen();
         }
     ));
+  }
+
+
+  void toAboutAppScreen() {
+    App.navigatorKey.currentState!.push(
+      CupertinoPageRoute(builder: (_) {
+        return const AboutAppScreen();
+      })
+    );
   }
 
 
