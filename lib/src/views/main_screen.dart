@@ -10,8 +10,8 @@ import '../components/app_header.dart';
 import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class MainScreen extends StatelessWidget {
+  const MainScreen({super.key});
 
   static final viewKey = GlobalKey();
 

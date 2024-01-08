@@ -1,7 +1,6 @@
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/suggest_transplate_toast_widget.dart';
 
 import '../../main.dart';
@@ -11,7 +10,7 @@ class SuggestTranslateController {
 
   static FlashController<Object?>? _flashController;
 
-  static Future<void> show(WidgetRef ref, {required AlwaysEnabled onEnabled}) async {
+  static Future<void> show({required AlwaysEnabled onEnabled}) async {
     _flashController?.dismiss();
     await App.navigatorKey.currentContext!.showFlash(
         transitionDuration: const Duration(milliseconds: 500),

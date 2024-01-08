@@ -2,19 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:what_is/src/controllers/suggest_translate_controller.dart';
-import 'package:what_is/src/controllers/webview_controller.dart';
 import 'package:what_is/src/providers/display_web_page_tree_id_provider.dart';
 import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
 
 import '../../main.dart';
-import '../providers/content_menu_provider.dart';
 import '../providers/webview_controllers_provider.dart';
 import '../providers/display_web_page_index_provider.dart';
 import '../providers/loading_webview_provider.dart';
@@ -69,13 +65,14 @@ class SearchViewWidget extends HookConsumerWidget {
               },
               onShare: () async {
                 final url = await currentWebViewController?.getOriginalUrl();
-                if (url != null) await Share.share(url.toString()); //TODO: できたらURLをテキストではなくWebサイトのように共有したい
+                if (url != null) await Share.share(url.toString());
+                //TODO: できたらURLをテキストではなくWebサイトのように共有したい（現在のshare_plusパッケージだと実現できなそう）
               },
               onReload: () async {
                 currentWebViewController?.reload();
-                final url = await currentWebViewController?.getOriginalUrl();
+                final url = await currentWebViewController?.getUrl();
                 if (url == null) return;
-                // すでに翻訳するか確認していた場合、再度確認する。
+                // すでに翻訳するか確認していた場合、再度確認するためにリストから削除する。
                 ref.read(translationConfirmedPageListProvider.notifier).remove(url.toString());
               },
             ),
@@ -85,66 +82,6 @@ class SearchViewWidget extends HookConsumerWidget {
     );
   }
 
-}
-
-
-
-class AppWebView extends HookConsumerWidget {
-  const AppWebView({
-    super.key,
-    required this.initialUrl,
-    required this.searchTreeId
-  });
-
-  final WebUri initialUrl;
-  final int searchTreeId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-
-    final isLoadingNotifier = ref.watch(isLoadingWebViewProvider.notifier);
-    ref.watch(translationConfirmedPageListProvider);
-
-    return InAppWebView(
-      initialUrlRequest: URLRequest(url: initialUrl),
-      initialSettings: InAppWebViewSettings(
-        transparentBackground: true,
-        javaScriptEnabled: true,
-        allowsLinkPreview: false,
-      ),
-      contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
-      onLoadStart: (_, __) => isLoadingNotifier.state = true,
-      onLoadStop: (controller, uri) async {
-        isLoadingNotifier.state = false;
-        if (uri == null) return;
-        WebViewController().translateIfNeeded(ref, controller: controller, uri: uri);
-      },
-      onWebViewCreated: (controller) {
-        ref.read(webViewControllersProvider.notifier).add(
-            (searchTreeId: searchTreeId, controller: controller));
-      },
-      onUpdateVisitedHistory: (controller, __, ___) async {
-        //TODO: 閲覧履歴を取得してデータ活用にする。
-      },
-
-      shouldOverrideUrlLoading: (_, __) async {
-        return NavigationActionPolicy.ALLOW; //deeplinkで勝手にアプリが開いてしまう問題の対処
-      },
-      // shouldOverrideUrlLoading: (controller, navigationAction) async {
-      //   final currentUrl = (await controller.getUrl());
-      //   if (currentUrl.toString() == initialUrl.toString()) {
-      //     return NavigationActionPolicy.ALLOW;
-      //   }
-      //   if (navigationAction.isForMainFrame) {
-      //     return WebViewController().checkLink(ref,
-      //         currentUrl: currentUrl.toString(),
-      //         requestUrl: navigationAction.request.url.toString());
-      //   } else {
-      //     return NavigationActionPolicy.ALLOW;
-      //   }
-      // },
-    );
-  }
 }
 
 

@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:what_is/src/controllers/webview_controller.dart';
 
 
 /// 翻訳を有効にしたサイトのURLを管理する。
@@ -19,8 +20,10 @@ class TranslationConfirmedPageListNotifier extends AutoDisposeNotifier<List<Stri
   void add(String url) => state = [...state, url];
 
 
+  /// 渡されたURLとそのURLのWebページの翻訳用WebページのURLをリストから削除する。
   void remove(String url) {
-    state = List.of(state)..removeWhere((e) => e == url);
+    final translateSiteUrl = WebViewController(ref).generateTranslateSiteUrl(url);
+    state = List.of(state)..removeWhere((e) => e == url || e == translateSiteUrl);
   }
 }
 

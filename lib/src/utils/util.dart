@@ -2,8 +2,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' show WebUri;
 
 
-WebUri createUrl(String text, {bool isDirectUrl = false}) {
-  if (isDirectUrl) {
+WebUri createUrl(String text, {bool isUrl = false}) {
+  if (isUrl) {
     return WebUri(text);
   } else {
     return WebUri('https://www.google.co.jp/search?q=$text とは？');

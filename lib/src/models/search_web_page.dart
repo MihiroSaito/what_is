@@ -1,4 +1,4 @@
-import '../views/webivew.dart';
+import '../components/webview.dart';
 
 /// 検索したWebページの情報を格納する
 /// ```
@@ -18,8 +18,9 @@ class SearchWebPage {
   final int indexedStackIndex;
 
   /// 検索した時のワード
+  /// * nullの場合は検索ではなく、URL直アクセス
   ///
-  final String searchWord;
+  final String? searchWord;
 
   /// 検索の最初に利用したURL
   ///

@@ -14,13 +14,14 @@ import 'package:what_is/src/views/search_tree_screen.dart';
 import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 import '../views/about_app_screen.dart';
-import '../views/webivew.dart';
+import '../components/search_view.dart';
 
 
 class AppNavigator {
 
   static BuildContext? searchViewContext;
 
+  /// main画面内で検索画面に切り替える
   static void toSearchView(BuildContext context, WidgetRef ref, {
     required String searchText,
     bool isDirectUrl = false
@@ -32,13 +33,14 @@ class AppNavigator {
 
     ref.watch(webPagesProvider.notifier).add(
         parentTreeId: null,
-        searchWord: searchText,
-        isDirectUrl: isDirectUrl);
+        searchWordOrUrl: searchText,
+        isUrl: isDirectUrl);
 
     // クリップボードからコピーするためのポップは非表示にする
     SearchByClipBoardController.pop();
   }
 
+  /// main画面内の検索画面を終了する。
   static popSearchView(WidgetRef ref) {
     if (searchViewContext == null) return;
     if (searchViewContext!.mounted) {
@@ -53,7 +55,6 @@ class AppNavigator {
       Navigator.pop(searchViewContext!);
     }
   }
-
 
 
   void toSearchTreePage() {

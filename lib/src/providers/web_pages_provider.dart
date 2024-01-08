@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/models/search_tree.dart';
 import 'package:what_is/src/models/search_web_page.dart';
-import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
-import 'package:what_is/src/views/webivew.dart';
 
+import '../components/webview.dart';
 import '../utils/util.dart';
 import 'search_tree_provider.dart';
 
@@ -31,15 +29,15 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
   ///
   SearchWebPage add({
     required int? parentTreeId,
-    required String searchWord,
-    bool isDirectUrl = false
+    required String searchWordOrUrl,
+    required bool isUrl
   }) {
-    final initialUrl = createUrl(searchWord, isDirectUrl: isDirectUrl);
+    final initialUrl = createUrl(searchWordOrUrl, isUrl: isUrl);
     final newIndexedStackIndex = state.length;
     final newSearchTree = SearchTree(
         searchWebPage: SearchWebPage(
             indexedStackIndex: newIndexedStackIndex,
-            searchWord: searchWord,
+            searchWord: isUrl? null : searchWordOrUrl, // URLの場合は検索ワードがないためNull
             initUrl: initialUrl.toString(),
             webViewWidget: AppWebView(
                 initialUrl: initialUrl,
