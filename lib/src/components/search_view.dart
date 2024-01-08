@@ -64,7 +64,7 @@ class SearchViewWidget extends HookConsumerWidget {
                 SuggestTranslateController.pop();
               },
               onShare: () async {
-                final url = await currentWebViewController?.getOriginalUrl();
+                final url = await currentWebViewController?.getUrl();
                 if (url != null) await Share.share(url.toString());
                 //TODO: できたらURLをテキストではなくWebサイトのように共有したい（現在のshare_plusパッケージだと実現できなそう）
               },

@@ -28,6 +28,15 @@ class WebViewController {
     // 最初のGoogle検索からの遷移はWebViewの挙動にしたがって画面遷移する。
     if (_arePathsEqual(uri1, uri2)) return NavigationActionPolicy.ALLOW;
 
+
+    /// デバッグ時に便利なため残しとく。
+    // print('==============================');
+    // print('initialUrl: $uri1');
+    // print('currentUrl: $uri2');
+    // print('requestUrl: $uri3');
+    // print('currentUrlとrequestUrlのパスが同じ${_arePathsEqual(uri2, uri3)}');
+    // print('==============================');
+
     // URLパスが同じ = 現在のページと同じコンテンツのため「さらに検索」機能に実行をスキップする
     if (_arePathsEqual(uri2, uri3)) {
       return NavigationActionPolicy.ALLOW;
