@@ -111,17 +111,19 @@ class SearchTreeWidget extends HookConsumerWidget {
     this.children = const [],
     super.key,
     required this.title,
-    required this.siteLogo,
+    required this.faviconUrl,
     required this.searchTreeId,
-    required this.pageThumbnail
+    required this.pageThumbnailUrl,
+    required this.siteName
   });
   final bool isHomeCard;
   final List<Widget> children;
 
   final String title;
-  final ImageProvider siteLogo;
+  final String? faviconUrl;
   final int searchTreeId;
-  final ImageProvider? pageThumbnail;
+  final String? pageThumbnailUrl;
+  final String? siteName;
 
   static const areaColor = Color(0xFF30435E);
 
@@ -144,7 +146,9 @@ class SearchTreeWidget extends HookConsumerWidget {
               id: searchTreeId,
               isHomeCard: isHomeCard,
               title: title,
-              pageThumbnail: pageThumbnail
+              pageThumbnailUrl: pageThumbnailUrl,
+              faviconUrl: faviconUrl,
+              siteName: siteName,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 40.0),
@@ -219,13 +223,17 @@ class _Card extends HookConsumerWidget {
     required this.id,
     required this.isHomeCard,
     required this.title,
-    required this.pageThumbnail
+    required this.pageThumbnailUrl,
+    required this.faviconUrl,
+    required this.siteName
   });
 
   final int id;
   final bool isHomeCard;
   final String title;
-  final ImageProvider? pageThumbnail;
+  final String? pageThumbnailUrl;
+  final String? faviconUrl;
+  final String? siteName;
 
   Widget labelIfNeed() {
     if (isHomeCard) {
@@ -287,8 +295,10 @@ class _Card extends HookConsumerWidget {
                             style: const TextStyle(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                height: 1.5
+                                height: 1.5,
                             ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
 
@@ -299,21 +309,27 @@ class _Card extends HookConsumerWidget {
                             Container(
                               height: 24.0,
                               width: 24.0,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    //TODO: ちゃんとした画像使う
-                                      image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqTcH9zNA5--jcBmb3fBuZ8RMpZSgX-EuUdKAm37L9EfpljQ1C_bQ8j3Xdf0tqOohP5Cw&usqp=CAU'),
+                                  color: AppTheme.isDarkMode()
+                                      ? AppTheme.darkColor1
+                                      : AppTheme.lightColor1,
+                                  image: faviconUrl != null? DecorationImage(
+                                      image: NetworkImage(faviconUrl!),
                                       fit: BoxFit.cover,
                                       filterQuality: FilterQuality.medium
-                                  )
+                                  ) : null
                               ),
                             ),
                             const SizedBox(width: 6.0,),
-                            Text(
-                              'Google$id', //TODO: ちゃんとしたサイト名使う
-                              style: const TextStyle(
-                                  fontSize: 12
+                            Expanded(
+                              child: Text(
+                                siteName ?? "",
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             )
                           ],
@@ -323,7 +339,7 @@ class _Card extends HookConsumerWidget {
                   ),
                 ),
                 Expanded(
-                  child: pageThumbnail == null? Container(
+                  child: pageThumbnailUrl == null? Container(
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(16.0),
@@ -337,13 +353,16 @@ class _Card extends HookConsumerWidget {
                       child: Icon(Icons.public, color: Color(0xFF7D858B),),
                     ),
                   ) : Container(
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(16.0),
-                            bottomRight: Radius.circular(16.0)
+                    decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(12.0),
+                            bottomRight: Radius.circular(12.0)
                         ),
-                        image: DecorationImage( //TODO: ちゃんとする
-                            image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQuonttDVUIaT7bH-QRsQbT_jUHBjVPlOuOJUS8JMWvjp5D8qtljXIILivwyU7a_f-ot8Q&usqp=CAU'),
+                        color: AppTheme.isDarkMode()
+                            ? AppTheme.darkColor1
+                            : AppTheme.lightColor1,
+                        image: DecorationImage(
+                            image: NetworkImage(pageThumbnailUrl!),
                             fit: BoxFit.cover,
                             filterQuality: FilterQuality.medium
                         )

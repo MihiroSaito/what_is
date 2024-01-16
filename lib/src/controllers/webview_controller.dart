@@ -31,15 +31,17 @@ class WebViewController {
 
 
     /// デバッグ時に便利なため残しとく。
-    print('==============================');
-    print('initialUrl: $uri1');
-    print('currentUrl: $uri2');
-    print('requestUrl: $uri3');
-    print('currentUrlとrequestUrlのパスが同じ${_arePathsEqual(uri2, uri3)}');
-    print('==============================');
+    // print('==============================');
+    // print('initialUrl: $uri1');
+    // print('currentUrl: $uri2');
+    // print('requestUrl: $uri3');
+    // print('currentUrlとrequestUrlのパスが同じ${_arePathsEqual(uri2, uri3)}');
+    // print('==============================');
 
     // URLパスが同じ = 現在のページと同じコンテンツのため「さらに検索」機能に実行をスキップする
-    if (_arePathsEqual(uri2, uri3)) {
+    // 翻訳前と後もコンテンツは変わらないためスキップ
+    if (_arePathsEqual(uri2, uri3) ||
+        _arePathsEqual(uri2, Uri.parse(generateTranslateSiteUrl('$uri3')))) {
       return NavigationActionPolicy.ALLOW;
     } else {
       moreSearch(
@@ -60,7 +62,16 @@ class WebViewController {
 
   /// Webページを翻訳してくれるWebページを生成する。
   String generateTranslateSiteUrl(String url) {
-    return 'https://translate.google.com/translate?sl=auto&tl=ja&hl=ja&u=$url';
+    // オリジナルURLからドメインを抽出
+    Uri uri = Uri.parse(url);
+
+    // Google TranslateのベースURL
+    String googleTranslateBaseURL = "https://${uri.host.replaceAll('.', '-')}.translate.goog";
+
+    // Google TranslateのURLを組み立て
+    String translatedURL = "$googleTranslateBaseURL${uri.path}?_x_tr_hist=true&_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja";
+
+    return translatedURL;
   }
 
 
@@ -123,13 +134,11 @@ class WebViewController {
     required String searchWordOrUrl,
     required bool isUrl
   }) {
-    if (ref.runtimeType == (AutoDisposeProviderRef<ContextMenu>) || ref.runtimeType == WidgetRef) {
-      ref.read(webPagesProvider.notifier).add(
-          parentTreeId: currentTreeId,
-          searchWordOrUrl: searchWordOrUrl,
-          isUrl: isUrl
-      );
-    }
+    ref.read(webPagesProvider.notifier).add(
+        parentTreeId: currentTreeId,
+        searchWordOrUrl: searchWordOrUrl,
+        isUrl: isUrl
+    );
   }
 
 

@@ -10,6 +10,7 @@ import 'package:what_is/src/providers/loading_webview_provider.dart';
 import 'package:what_is/src/providers/search_tree_provider.dart';
 import 'package:what_is/src/providers/translation_confirmed_page_list.dart';
 import 'package:what_is/src/providers/webview_controllers_provider.dart';
+import 'package:what_is/src/views/main_screen.dart';
 import 'package:what_is/src/views/search_tree_screen.dart';
 
 import '../controllers/search_by_clipboard_controller.dart';
@@ -23,12 +24,15 @@ class AppNavigator {
   static BuildContext? searchViewContext;
 
   /// main画面内で検索画面に切り替える
-  static void toSearchView(BuildContext context, WidgetRef ref, {
+  static void toSearchView(WidgetRef ref, {
     required String searchText,
     bool isDirectUrl = false
   }) {
-    searchViewContext = context;
-    Navigator.push(context, MaterialPageRoute(builder: (_) {
+    RegExp pattern = RegExp(r'^(.*?)\s*とは？?$');
+    searchText = pattern.firstMatch(searchText)?.group(1) ?? searchText;
+
+    searchViewContext = MainScreen.pageContext;
+    Navigator.push(searchViewContext!, MaterialPageRoute(builder: (_) {
       return const SearchViewWidget();
     }));
 
@@ -38,7 +42,7 @@ class AppNavigator {
         isUrl: isDirectUrl);
 
     // クリップボードからコピーするためのポップは非表示にする
-    SearchByClipBoardController.pop();
+    // SearchByClipBoardController.pop();
   }
 
   /// main画面内の検索画面を終了する。

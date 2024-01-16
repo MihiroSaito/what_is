@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:what_is/main.dart';
-import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/components/text_button.dart';
-import 'package:what_is/src/config/theme.dart';
+import 'package:collection/collection.dart';
 
 import '../controllers/webview_controller.dart';
 import '../providers/content_menu_provider.dart';
@@ -14,19 +12,28 @@ import '../providers/loading_webview_provider.dart';
 import '../providers/translation_confirmed_page_list.dart';
 import '../providers/webview_controllers_provider.dart';
 
+
 class AppWebView extends HookConsumerWidget {
-  const AppWebView({
+  AppWebView({
     super.key,
     required this.initialUrl,
     required this.searchTreeId,
-    required this.hasSearchWord
-  });
+    required this.hasSearchWord,
+  }) : title = ValueNotifier(""), favicon = ValueNotifier([]), thumbnail = ValueNotifier(null);
 
   final WebUri initialUrl;
   final int searchTreeId;
 
   /// 検索ワードがある = URL直アクセスではない
   final bool hasSearchWord;
+
+  /// サイトのタイトル
+  final ValueNotifier<String> title;
+
+  /// サイトのFavicon
+  final ValueNotifier<List<Favicon>> favicon;
+
+  final ValueNotifier<String?> thumbnail;
 
   /// ユーザーがURLリクエストを送った時に行う処理
   NavigationActionPolicy shouldOverrideUrlLoadingProcess({
@@ -96,16 +103,15 @@ class AppWebView extends HookConsumerWidget {
         InAppWebView(
           initialUrlRequest: URLRequest(url: initialUrl),
           initialSettings: InAppWebViewSettings(
-            transparentBackground: true,
             javaScriptEnabled: true,
             allowsLinkPreview: false,
           ),
           contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
-          onLoadStart: (_, __) {
+          onLoadStart: (controller, __) {
             isLoadingNotifier.state = true;
             errorMessage.value = null;
           },
-          onLoadStop: (controller, uri) async {
+          onLoadStop: (controller, uri) {
             isLoadingNotifier.state = false;
             if (uri == null) return;
             instance.translateIfNeeded(controller: controller, uri: uri);
@@ -118,12 +124,27 @@ class AppWebView extends HookConsumerWidget {
               isLoadingNotifier.state = false;
             }
           },
-          onWebViewCreated: (controller) {
+          onWebViewCreated: (controller) async {
             ref.read(webViewControllersProvider.notifier).add(
                 (searchTreeId: searchTreeId, controller: controller));
           },
           onUpdateVisitedHistory: (controller, __, ___) async {
             //TODO: 閲覧履歴を取得してデータ活用にする。
+          },
+          onLoadResource: (controller, aa) async {
+            try {
+              title.value = await controller.getTitle() ?? "";
+              favicon.value = await controller.getFavicons();
+              final matas = await controller.getMetaTags();
+              for (final v in matas) {
+                final aa = v.attrs?.firstWhereOrNull((e) => e.value =='og:image');
+                if (aa != null) {
+                  thumbnail.value = v.content;
+                }
+              }
+            } catch (e) {
+              debugPrint('AppWebView in onLoadResource: $e');
+            }
           },
           shouldOverrideUrlLoading: (controller, navigationAction) async {
             return shouldOverrideUrlLoadingProcess(

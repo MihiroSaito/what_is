@@ -19,8 +19,9 @@ class SearchTreeController {
       title: node.searchWebPage.searchWord ?? node.searchWebPage.initUrl, // 検索ワードがない（検索を飛ばしURL直アクセス）だったらアクセスしたURLを使用する
       searchTreeId: node.id,
       isHomeCard: node.id == 0,
-      siteLogo: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqTcH9zNA5--jcBmb3fBuZ8RMpZSgX-EuUdKAm37L9EfpljQ1C_bQ8j3Xdf0tqOohP5Cw&usqp=CAU'),
-      pageThumbnail: null, //TODO: 画像指定する。
+      faviconUrl: node.searchWebPage.webViewWidget.favicon.value.lastOrNull?.url.toString(),
+      pageThumbnailUrl: node.searchWebPage.webViewWidget.thumbnail.value,
+      siteName: node.searchWebPage.webViewWidget.title.value,
       children: node.children.map((child) {
         return createSearchTreeWidget(child);
       }).toList(),

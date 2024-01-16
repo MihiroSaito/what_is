@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
+import 'package:what_is/src/controllers/manual_search_controller.dart';
 import 'package:what_is/src/providers/device_size_provider.dart';
 import 'package:what_is/src/providers/web_pages_provider.dart';
 import 'package:what_is/src/routing/navigator.dart';
@@ -113,6 +114,17 @@ class AppHeader extends HookConsumerWidget {
                           ],
                         ),
                       ),
+                    ),
+                  )
+                else
+                  SquishyButton(
+                    onTap: () {
+                      ManualSearchController.show();
+                    },
+                    disableWidget: const SizedBox.shrink(),
+                    child: const Icon(
+                      CupertinoIcons.search,
+                      size: 28,
                     ),
                   ),
                 const SizedBox(width: 16.0,),
