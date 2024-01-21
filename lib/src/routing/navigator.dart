@@ -26,7 +26,8 @@ class AppNavigator {
   /// main画面内で検索画面に切り替える
   static void toSearchView(WidgetRef ref, {
     required String searchText,
-    bool isDirectUrl = false
+    bool isDirectUrl = false,
+    List<String> options = const []
   }) {
     RegExp pattern = RegExp(r'^(.*?)\s*とは？?$');
     searchText = pattern.firstMatch(searchText)?.group(1) ?? searchText;
@@ -39,7 +40,8 @@ class AppNavigator {
     ref.watch(webPagesProvider.notifier).add(
         parentTreeId: null,
         searchWordOrUrl: searchText,
-        isUrl: isDirectUrl);
+        isUrl: isDirectUrl,
+        options: options);
 
     // クリップボードからコピーするためのポップは非表示にする
     // SearchByClipBoardController.pop();

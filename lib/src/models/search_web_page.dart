@@ -30,11 +30,15 @@ class SearchWebPage {
   ///
   final AppWebView webViewWidget;
 
+  /// 検索に使った補助ワード
+  final List<String> searchOptions;
+
   const SearchWebPage({
     required this.indexedStackIndex,
     required this.searchWord,
     required this.initUrl,
-    required this.webViewWidget
+    required this.webViewWidget,
+    required this.searchOptions,
   });
 
   @override
@@ -43,6 +47,7 @@ class SearchWebPage {
         "indexedStackIndex: $indexedStackIndex, "
         "searchWord: $searchWord, "
         "initUrl: $initUrl, "
+        "searchOptions: $searchOptions, "
         "webViewWidget: -----)";
   }
 }

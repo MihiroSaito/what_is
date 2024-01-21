@@ -47,6 +47,10 @@ dependencies:
   http: ^0.13.6
   html: ^0.15.4
   favicon: ^1.1.2
+  flutter_slidable: ^3.0.1
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:

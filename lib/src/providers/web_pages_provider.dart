@@ -30,15 +30,17 @@ class WebPagesNotifier extends AutoDisposeNotifier<List<SearchWebPage>> {
   SearchWebPage add({
     required int? parentTreeId,
     required String searchWordOrUrl,
-    required bool isUrl
+    required bool isUrl,
+    List<String> options = const []
   }) {
-    final initialUrl = createUrl(searchWordOrUrl, isUrl: isUrl);
+    final initialUrl = createUrl(searchWordOrUrl, isUrl: isUrl, option: options);
     final newIndexedStackIndex = state.length;
     final newSearchTree = SearchTree(
         searchWebPage: SearchWebPage(
             indexedStackIndex: newIndexedStackIndex,
             searchWord: isUrl? null : searchWordOrUrl, // URLの場合は検索ワードがないためNull
             initUrl: initialUrl.toString(),
+            searchOptions: options,
             webViewWidget: AppWebView(
                 initialUrl: initialUrl,
                 searchTreeId: SearchTree.generateTreeId(newIndexedStackIndex),

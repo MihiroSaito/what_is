@@ -2,11 +2,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' show WebUri;
 
 
-WebUri createUrl(String text, {bool isUrl = false}) {
+WebUri createUrl(String text, {bool isUrl = false, List<String> option = const []}) {
   if (isUrl) {
     return WebUri(text);
   } else {
-    return WebUri('https://www.google.co.jp/search?q=$text とは？');
+    if (option.isNotEmpty) {
+      return WebUri('https://www.google.co.jp/search?q=$text とは ${option.first}');
+    } else {
+      return WebUri('https://www.google.co.jp/search?q=$text とは');
+    }
   }
 }
 

@@ -11,7 +11,6 @@ import 'package:what_is/src/routing/navigator.dart';
 import 'package:what_is/src/utils/util.dart';
 
 import '../components/app_header.dart';
-import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 
 class MainScreen extends StatelessWidget {

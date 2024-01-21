@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/controllers/suggest_translate_controller.dart';
+import 'package:what_is/src/routing/navigator.dart';
 
 import '../providers/display_web_page_index_provider.dart';
 import '../providers/translation_confirmed_page_list.dart';
@@ -139,6 +140,12 @@ class WebViewController {
         searchWordOrUrl: searchWordOrUrl,
         isUrl: isUrl
     );
+  }
+
+
+  void newSearch(WidgetRef ref, {required String searchText, List<String> options = const []}) {
+    AppNavigator.popSearchView(ref);
+    AppNavigator.toSearchView(ref, searchText: searchText, options: options);
   }
 
 
