@@ -66,6 +66,7 @@ class MainScreen extends StatelessWidget {
 
                           return Column(
                             mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Stack(
                                 children: [
@@ -158,22 +159,29 @@ class MainScreen extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 32.0,),
-                              SquishyButton(
-                                disableWidget: const SizedBox.shrink(),
-                                onTap: () {
-                                  HowToUseController().show();
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(40.0),
-                                      border: Border.all(width: 1.0, color: AppTheme.darkColor1)
-                                  ),
-                                  padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
-                                  child: const Text(
-                                    '検索の仕方',
-                                    style: TextStyle(
-                                        height: 1.0
-                                    ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    HowToUseController().show();
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.help_outline,
+                                        size: 18.0,
+                                        color: Theme.of(context).iconTheme.color!.withOpacity(0.6),
+                                      ),
+                                      const SizedBox(width: 4.0,),
+                                      Text(
+                                        '検索の仕方',
+                                        style: TextStyle(
+                                          height: 1.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.6)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               )

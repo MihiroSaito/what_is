@@ -45,7 +45,7 @@ class WebViewController {
         _arePathsEqual(uri2, Uri.parse(generateTranslateSiteUrl('$uri3')))) {
       return NavigationActionPolicy.ALLOW;
     } else {
-      moreSearch(
+      immediatelySearch(
           currentTreeId: currentTreeId,
           searchWordOrUrl: requestPageUrl,
           isUrl: true); // パスが違ったら「さらに検索」機能を使ってページを開く
@@ -116,7 +116,7 @@ class WebViewController {
 
 
   /// 「さらに検索」機能の処理
-  void moreSearch({
+  void immediatelySearch({
     required int currentTreeId,
     required String searchWordOrUrl,
     required bool isUrl

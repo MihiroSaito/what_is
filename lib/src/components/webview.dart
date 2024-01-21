@@ -3,14 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/components/text_button.dart';
 import 'package:collection/collection.dart';
 
 import '../config/theme.dart';
 import '../controllers/webview_controller.dart';
 import '../providers/content_menu_provider.dart';
+import '../providers/display_web_page_index_provider.dart';
 import '../providers/loading_webview_provider.dart';
 import '../providers/translation_confirmed_page_list.dart';
+import '../providers/web_pages_provider.dart';
 import '../providers/webview_controllers_provider.dart';
 
 
@@ -87,7 +90,21 @@ class AppWebView extends HookConsumerWidget {
     return navigationActionPolicy;
   }
 
-
+  static final adUrlFilters = [
+    ".*.doubleclick.net/.*",
+    ".*.ads.pubmatic.com/.*",
+    ".*.googlesyndication.com/.*",
+    ".*.google-analytics.com/.*",
+    ".*.adservice.google.*/.*",
+    ".*.adbrite.com/.*",
+    ".*.exponential.com/.*",
+    ".*.quantserve.com/.*",
+    ".*.scorecardresearch.com/.*",
+    ".*.zedo.com/.*",
+    ".*.adsafeprotected.com/.*",
+    ".*.teads.tv/.*",
+    ".*.outbrain.com/.*"
+  ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -98,64 +115,79 @@ class AppWebView extends HookConsumerWidget {
     final currentUrl = useState(initialUrl);
     final lastRequestUrl = useState(initialUrl);
     final errorMessage = useState<String?>(null);
+    final contentBlockers = useState(<ContentBlocker>[]);
+
+    useEffect(() {
+      contentBlockers.value = getContentsBlockers();
+      return;
+    }, const []);
 
     return Stack(
       children: [
-        InAppWebView(
-          initialUrlRequest: URLRequest(url: initialUrl),
-          initialSettings: InAppWebViewSettings(
-            javaScriptEnabled: true,
-            allowsLinkPreview: false,
-          ),
-          contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
-          onLoadStart: (controller, __) {
-            isLoadingNotifier.state = true;
-            errorMessage.value = null;
-          },
-          onLoadStop: (controller, uri) {
-            isLoadingNotifier.state = false;
-            if (uri == null) return;
-            instance.translateIfNeeded(controller: controller, uri: uri);
-          },
-          onReceivedError: (_, __, webResourceError) {
-            // リロードしまくったり素早くブラウザバックした時に起こるエラーは無視
-            if (webResourceError.type != WebResourceErrorType.CANCELLED) {
-              debugPrint('webResourceError.type: ${webResourceError.type}');
-              errorMessage.value = webResourceError.description;
-              isLoadingNotifier.state = false;
-            }
-          },
-          onWebViewCreated: (controller) async {
-            ref.read(webViewControllersProvider.notifier).add(
-                (searchTreeId: searchTreeId, controller: controller));
-          },
-          onUpdateVisitedHistory: (controller, __, ___) async {
-            //TODO: 閲覧履歴を取得してデータ活用にする。
-          },
-          onLoadResource: (controller, aa) async {
-            try {
-              title.value = await controller.getTitle() ?? "";
-              favicon.value = await controller.getFavicons();
-              final matas = await controller.getMetaTags();
-              for (final v in matas) {
-                final aa = v.attrs?.firstWhereOrNull((e) => e.value =='og:image');
-                if (aa != null) {
-                  thumbnail.value = v.content;
-                }
-              }
-            } catch (e) {
-              debugPrint('AppWebView in onLoadResource: $e');
-            }
-          },
-          shouldOverrideUrlLoading: (controller, navigationAction) async {
-            return shouldOverrideUrlLoadingProcess(
-                navigationAction: navigationAction,
-                lastRequestPageUrl: lastRequestUrl,
-                webViewController: instance,
-                currentPageUrl: currentUrl,
-                hasSearchWord: hasSearchWord);
+        Column(
+          children: [
+            if (currentUrl.value.toString().contains('google.co.jp/search'))
+              const GoogleSearchOption(),
+            Expanded(
+              child: InAppWebView(
+                initialUrlRequest: URLRequest(url: initialUrl),
+                initialSettings: InAppWebViewSettings(
+                  javaScriptEnabled: true,
+                  allowsLinkPreview: false,
+                  contentBlockers: contentBlockers.value
+                ),
+                contextMenu: ref.watch(contextMenuProvider(searchTreeId)),
+                onLoadStart: (controller, __) {
+                  isLoadingNotifier.state = true;
+                  errorMessage.value = null;
+                },
+                onLoadStop: (controller, uri) {
+                  isLoadingNotifier.state = false;
+                  if (uri == null) return;
+                  instance.translateIfNeeded(controller: controller, uri: uri);
+                },
+                onReceivedError: (_, __, webResourceError) {
+                  // リロードしまくったり素早くブラウザバックした時に起こるエラーは無視
+                  if (webResourceError.type != WebResourceErrorType.CANCELLED) {
+                    debugPrint('webResourceError.type: ${webResourceError.type}');
+                    errorMessage.value = webResourceError.description;
+                    isLoadingNotifier.state = false;
+                  }
+                },
+                onWebViewCreated: (controller) async {
+                  ref.read(webViewControllersProvider.notifier).add(
+                      (searchTreeId: searchTreeId, controller: controller));
+                },
+                onUpdateVisitedHistory: (controller, __, ___) async {
+                  //TODO: 閲覧履歴を取得してデータ活用にする。
+                },
+                onLoadResource: (controller, aa) async {
+                  try {
+                    title.value = await controller.getTitle() ?? "";
+                    favicon.value = await controller.getFavicons();
+                    final matas = await controller.getMetaTags();
+                    for (final v in matas) {
+                      final aa = v.attrs?.firstWhereOrNull((e) => e.value =='og:image');
+                      if (aa != null) {
+                        thumbnail.value = v.content;
+                      }
+                    }
+                  } catch (e) {
+                    debugPrint('AppWebView in onLoadResource: $e');
+                  }
+                },
+                shouldOverrideUrlLoading: (controller, navigationAction) async {
+                  return shouldOverrideUrlLoadingProcess(
+                      navigationAction: navigationAction,
+                      lastRequestPageUrl: lastRequestUrl,
+                      webViewController: instance,
+                      currentPageUrl: currentUrl,
+                      hasSearchWord: hasSearchWord);
 
-          },
+                },
+              ),
+            ),
+          ],
         ),
 
 
@@ -166,6 +198,31 @@ class AppWebView extends HookConsumerWidget {
 
       ],
     );
+  }
+
+
+  List<ContentBlocker> getContentsBlockers() {
+    final contentBlockersList = <ContentBlocker>[];
+    for (final adUrlFilter in adUrlFilters) {
+      contentBlockersList.add(ContentBlocker(
+          trigger: ContentBlockerTrigger(
+            urlFilter: adUrlFilter,
+          ),
+          action: ContentBlockerAction(
+            type: ContentBlockerActionType.BLOCK,
+          )));
+    }
+
+    contentBlockersList.add(ContentBlocker(
+        trigger: ContentBlockerTrigger(
+          urlFilter: ".*",
+        ),
+        action: ContentBlockerAction(
+            type: ContentBlockerActionType.CSS_DISPLAY_NONE,
+            selector:
+            ".banner, .banners, .ads, .ad, .advert, .widget-ads, .ad-unit")));
+
+    return contentBlockersList;
   }
 
 }
@@ -223,6 +280,106 @@ class _ErrorView extends StatelessWidget {
                     });
                   }
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class GoogleSearchOption extends HookConsumerWidget {
+  const GoogleSearchOption({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final instance = ref.watch(Provider(WebViewController.new));
+    final webPages = ref.watch(webPagesProvider);
+    final displayWebPageIndex = ref.watch(displayWebPageIndexProvider);
+    final searchWord = webPages[displayWebPageIndex].searchWord;
+    final searchOptions = webPages[displayWebPageIndex].searchOptions;
+
+    if (searchWord == null) return const SizedBox.shrink();
+
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+
+          tag(ref,
+              label: 'わかりやすく',
+              searchWord: searchWord,
+              searchOptions: searchOptions,
+              instance: instance),
+
+          const SizedBox(width: 8.0,),
+
+          tag(ref,
+              label: '使い方',
+              searchWord: searchWord,
+              searchOptions: searchOptions,
+              instance: instance),
+
+          const SizedBox(width: 8.0,),
+          SquishyButton(
+            disableWidget: const SizedBox.shrink(),
+            onTap: () {
+              //TODO: カスタマイズできる。
+            },
+            child: Icon(
+              Icons.settings,
+              color: Theme.of(context).iconTheme.color!.withOpacity(0.3),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget tag(WidgetRef ref, {
+    required String label,
+    required String searchWord,
+    required List<String> searchOptions,
+    required WebViewController instance
+  }) {
+
+    final isSelected = searchOptions.contains(label);
+
+    return SquishyButton(
+      disableWidget: const SizedBox.shrink(),
+      padding: EdgeInsets.zero,
+      onTap: () {
+        if (isSelected) {
+          instance.newSearch(ref, searchText: searchWord, options: []);
+        } else {
+          instance.newSearch(ref, searchText: searchWord, options: [label]);
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.0),
+            border: Border.all(width: 1.0, color: Colors.grey)
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+          child: Row(
+            children: [
+              Icon(
+                isSelected? CupertinoIcons.minus : CupertinoIcons.add,
+                size: 16.0,
+              ),
+              const SizedBox(width: 2.0,),
+              Text(
+                label,
+                style: const TextStyle(
+                    fontSize: 14.0
+                ),
+              ),
+              const SizedBox(width: 4.0,)
             ],
           ),
         ),

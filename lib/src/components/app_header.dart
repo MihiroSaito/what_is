@@ -43,18 +43,6 @@ class AppHeader extends HookConsumerWidget {
                 ),
                 const Spacer(),
                 if (webPages.isNotEmpty)
-                  SquishyButton(
-                    onTap: () {
-                      AppNavigator.popSearchView(ref);
-                    },
-                    disableWidget: const SizedBox.shrink(),
-                    child: const Icon(
-                      CupertinoIcons.house_alt,
-                      size: 28,
-                    ),
-                  ),
-                const SizedBox(width: 16.0,),
-                if (webPages.isNotEmpty)
                   AppAnimation.scale(
                     duration: webPages.length == 1? Duration.zero : const Duration(milliseconds: 400),
                     key: scaleKey.value, //初回or値が変わってbuildされた時のみアニメーションする
@@ -111,6 +99,18 @@ class AppHeader extends HookConsumerWidget {
                           ],
                         ),
                       ),
+                    ),
+                  ),
+                const SizedBox(width: 16.0,),
+                if (webPages.isNotEmpty)
+                  SquishyButton(
+                    onTap: () {
+                      AppNavigator.popSearchView(ref);
+                    },
+                    disableWidget: const SizedBox.shrink(),
+                    child: const Icon(
+                      CupertinoIcons.house_alt,
+                      size: 28,
                     ),
                   )
                 else

@@ -49,13 +49,7 @@ class SearchViewWidget extends HookConsumerWidget {
               child: IndexedStack(
                 index: displayWebPageIndex,
                 children: webPages.map((e) {
-                  return Column(
-                    children: [
-                      //TODO: Google検索画面でのみ表示したい。
-                      const GoogleSearchOption(),
-                      Expanded(child: e.webViewWidget),
-                    ],
-                  );
+                  return e.webViewWidget;
                 }).toList(),
               ),
             ),
@@ -225,105 +219,5 @@ class WebViewBottomBar extends StatelessWidget {
   }
 }
 
-
-
-
-class GoogleSearchOption extends HookConsumerWidget {
-  const GoogleSearchOption({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-
-    final instance = ref.watch(Provider(WebViewController.new));
-    final webPages = ref.watch(webPagesProvider);
-    final displayWebPageIndex = ref.watch(displayWebPageIndexProvider);
-    final searchWord = webPages[displayWebPageIndex].searchWord;
-    final searchOptions = webPages[displayWebPageIndex].searchOptions;
-
-    if (searchWord == null) return const SizedBox.shrink();
-
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-
-          tag(ref,
-              label: 'わかりやすく',
-              searchWord: searchWord,
-              searchOptions: searchOptions,
-              instance: instance),
-
-          const SizedBox(width: 8.0,),
-
-          tag(ref,
-              label: '使い方',
-              searchWord: searchWord,
-              searchOptions: searchOptions,
-              instance: instance),
-
-          const SizedBox(width: 8.0,),
-          SquishyButton(
-            disableWidget: const SizedBox.shrink(),
-            onTap: () {
-              //TODO: カスタマイズできる。
-            },
-            child: Icon(
-              Icons.settings,
-              color: Theme.of(context).iconTheme.color!.withOpacity(0.3),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget tag(WidgetRef ref, {
-    required String label,
-    required String searchWord,
-    required List<String> searchOptions,
-    required WebViewController instance
-  }) {
-
-    final isSelected = searchOptions.contains(label);
-
-    return SquishyButton(
-      disableWidget: const SizedBox.shrink(),
-      padding: EdgeInsets.zero,
-      onTap: () {
-        if (isSelected) {
-          instance.newSearch(ref, searchText: searchWord, options: []);
-        } else {
-          instance.newSearch(ref, searchText: searchWord, options: [label]);
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24.0),
-            border: Border.all(width: 1.0, color: Colors.grey)
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-          child: Row(
-            children: [
-              Icon(
-                isSelected? CupertinoIcons.minus : CupertinoIcons.add,
-                size: 16.0,
-              ),
-              const SizedBox(width: 2.0,),
-              Text(
-                label,
-                style: const TextStyle(
-                    fontSize: 14.0
-                ),
-              ),
-              const SizedBox(width: 4.0,)
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 

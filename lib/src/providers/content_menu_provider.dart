@@ -9,18 +9,7 @@ final contextMenuProvider = Provider.autoDispose.family<ContextMenu, int>((ref, 
   return ContextMenu(
     menuItems: [
 
-      ContextMenuItem(id: 1, title: "さらに検索", action: () async {
-        final currentWebViewController = ref.watch(specificWebViewControllerProvider(currentTreeId));
-        final selectedText = await currentWebViewController?.getSelectedText();
-        if (selectedText == null) return;
-        WebViewController(ref).moreSearch(
-            currentTreeId: currentTreeId,
-            searchWordOrUrl: selectedText,
-            isUrl: false
-        );
-      }),
-
-      ContextMenuItem(id: 2, title: "あとで検索", action: () async {
+      ContextMenuItem(id: 1, title: "あとで検索", action: () async {
         final currentWebViewController = ref.watch(specificWebViewControllerProvider(currentTreeId));
         final selectedText = await currentWebViewController?.getSelectedText();
         if (selectedText == null) return;
@@ -30,6 +19,17 @@ final contextMenuProvider = Provider.autoDispose.family<ContextMenu, int>((ref, 
             isUrl: false
         );
         //TODO: Loadingアニメーションが発生してしまうのが違和感あるため修正する。
+      }),
+
+      ContextMenuItem(id: 2, title: "すぐに検索", action: () async {
+        final currentWebViewController = ref.watch(specificWebViewControllerProvider(currentTreeId));
+        final selectedText = await currentWebViewController?.getSelectedText();
+        if (selectedText == null) return;
+        WebViewController(ref).immediatelySearch(
+            currentTreeId: currentTreeId,
+            searchWordOrUrl: selectedText,
+            isUrl: false
+        );
       }),
 
     ],
