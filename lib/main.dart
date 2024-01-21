@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/views/main_screen.dart';
-import 'package:what_is/src/config/theme.dart';
 
 import 'firebase_options.dart';
+import 'src/config/theme.dart';
 import 'src/utils/util.dart';
 
 
@@ -18,16 +18,13 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  final text = await getClipboardText();
-  runApp(ProviderScope(child: App(text: text)));
+  runApp(const ProviderScope(child: App()));
 }
 
 
 
 class App extends StatelessWidget {
-  const App({Key? key, required this.text}) : super(key: key);
-
-  final String? text;
+  const App({Key? key}) : super(key: key);
 
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

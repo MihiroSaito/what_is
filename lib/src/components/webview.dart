@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/text_button.dart';
 import 'package:collection/collection.dart';
 
+import '../config/theme.dart';
 import '../controllers/webview_controller.dart';
 import '../providers/content_menu_provider.dart';
 import '../providers/loading_webview_provider.dart';
@@ -189,7 +190,7 @@ class _ErrorView extends StatelessWidget {
             children: [
               Icon(
                 CupertinoIcons.xmark_circle_fill,
-                color: const Color(0xFFEB3535).withOpacity(0.8),
+                color: AppTheme.red.withOpacity(0.8),
                 size: 48,
               ),
               const SizedBox(height: 16.0,),

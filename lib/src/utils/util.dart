@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' show WebUri;
+import 'package:what_is/src/config/theme.dart';
 
 
 WebUri createUrl(String text, {bool isUrl = false, List<String> option = const []}) {
@@ -18,4 +19,9 @@ WebUri createUrl(String text, {bool isUrl = false, List<String> option = const [
 Future<String?> getClipboardText() async {
   final data = await Clipboard.getData(Clipboard.kTextPlain);
   return data?.text; // 現在のクリップボードにあるワードを取得
+}
+
+
+bool get isDarkMode {
+  return AppTheme.isDarkMode();
 }

@@ -63,7 +63,7 @@ class ConfirmDeleteDialogWidget extends StatelessWidget {
                     child: _Button(
                         onTap: () => Navigator.pop(context, true),
                         label: '削除する',
-                        backgroundColor: const Color(0xFFEB3535),
+                        backgroundColor: AppTheme.red,
                       textStyle: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.white

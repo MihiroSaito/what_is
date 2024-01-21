@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:what_is/src/components/animation.dart';
 import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/controllers/manual_search_controller.dart';
@@ -11,8 +9,7 @@ import 'package:what_is/src/providers/device_size_provider.dart';
 import 'package:what_is/src/providers/web_pages_provider.dart';
 import 'package:what_is/src/routing/navigator.dart';
 
-import '../config/const.dart';
-import '../config/theme.dart';
+import '../../src/config/theme.dart';
 
 
 class AppHeader extends HookConsumerWidget {
@@ -119,7 +116,7 @@ class AppHeader extends HookConsumerWidget {
                 else
                   SquishyButton(
                     onTap: () {
-                      ManualSearchController.show();
+                      ManualSearchController.show(context);
                     },
                     disableWidget: const SizedBox.shrink(),
                     child: const Icon(
@@ -156,73 +153,73 @@ class AppHeader extends HookConsumerWidget {
 
   void _showMenu(BuildContext context, WidgetRef ref) {
     showDialog(
-      useSafeArea: false,
-      context: context,
-      builder: (_) {
-        return AppAnimation.scale(
-          alignment: Alignment.topRight,
-          child: GestureDetector(
-            behavior: HitTestBehavior.deferToChild,
-            onTap: () => Navigator.pop(context),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Container(
-                width: 208,
-                margin: EdgeInsets.only(top: ref.watch(safeAreaPaddingProvider).top + 48, right: 8.0),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16.0),
-                    topRight: Radius.circular(4.0),
-                    bottomLeft: Radius.circular(16.0),
-                    bottomRight: Radius.circular(16.0),
+        useSafeArea: false,
+        context: context,
+        builder: (_) {
+          return AppAnimation.scale(
+            alignment: Alignment.topRight,
+            child: GestureDetector(
+              behavior: HitTestBehavior.deferToChild,
+              onTap: () => Navigator.pop(context),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Container(
+                  width: 208,
+                  margin: EdgeInsets.only(top: ref.watch(safeAreaPaddingProvider).top + 48, right: 8.0),
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(16.0),
+                        topRight: Radius.circular(4.0),
+                        bottomLeft: Radius.circular(16.0),
+                        bottomRight: Radius.circular(16.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8.0,
+                            offset: const Offset(0.0, 4.0)
+                        )
+                      ],
+                      color: AppTheme.isDarkMode()? const Color(0xFF222222) : Colors.white
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8.0,
-                      offset: const Offset(0.0, 4.0)
-                    )
-                  ],
-                  color: AppTheme.isDarkMode()? const Color(0xFF222222) : Colors.white
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(height: 2.0,),
-                    _item(context,
-                        label: '過去の検索',
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(14.0),
-                          topRight: Radius.circular(2.0),
-                        ),
-                        onTap: () {
-                          //TODO: 検索履歴を表示する。
-                        }
-                    ),
-                    _line(context, bold: true),
-                    _item(context, label: '設定',
-                        onTap: () {
-                          //TODO: 設定画面
-                        }),
-                    _line(context),
-                    _item(context, label: 'アプリについて',
-                        borderRadius: const BorderRadius.only(
-                          bottomRight: Radius.circular(14.0),
-                          bottomLeft: Radius.circular(14.0),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          AppNavigator().toAboutAppScreen();
-                        }
-                    ),
-                    const SizedBox(height: 2.0,),
-                  ],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 2.0,),
+                      _item(context,
+                          label: '過去の検索',
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(14.0),
+                            topRight: Radius.circular(2.0),
+                          ),
+                          onTap: () {
+                            //TODO: 検索履歴を表示する。
+                          }
+                      ),
+                      _line(context, bold: true),
+                      _item(context, label: '設定',
+                          onTap: () {
+                            //TODO: 設定画面
+                          }),
+                      _line(context),
+                      _item(context, label: 'アプリについて',
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(14.0),
+                            bottomLeft: Radius.circular(14.0),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                            AppNavigator().toAboutAppScreen();
+                          }
+                      ),
+                      const SizedBox(height: 2.0,),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      }
+          );
+        }
     );
   }
 
@@ -245,15 +242,15 @@ class AppHeader extends HookConsumerWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  height: 1.2,
-                  fontSize: 15.0,
-                  color: textRed
-                      ? const Color(0XFFEB3535)
-                      : Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.8)
+                    fontWeight: FontWeight.bold,
+                    height: 1.2,
+                    fontSize: 15.0,
+                    color: textRed
+                        ? const Color(0XFFEB3535)
+                        : Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.8)
                 ),
                 strutStyle: const StrutStyle(
-                  height: 1.2
+                    height: 1.2
                 ),
               )
             ],

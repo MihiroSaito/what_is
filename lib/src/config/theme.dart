@@ -54,4 +54,6 @@ class AppTheme {
 
   static const lightColor1 = Color(0xFFEFF5FA);
 
+  static const red = Color(0xFFEB3535);
+
 }
