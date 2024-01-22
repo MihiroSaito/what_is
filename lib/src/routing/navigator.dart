@@ -17,6 +17,7 @@ import '../controllers/search_by_clipboard_controller.dart';
 import '../providers/web_pages_provider.dart';
 import '../views/about_app_screen.dart';
 import '../components/search_view.dart';
+import '../views/history_screen.dart';
 
 
 class AppNavigator {
@@ -78,6 +79,15 @@ class AppNavigator {
     App.navigatorKey.currentState!.push(
       CupertinoPageRoute(builder: (_) {
         return const AboutAppScreen();
+      })
+    );
+  }
+
+
+  void toHistoryScreen() {
+    App.navigatorKey.currentState!.push(
+      CupertinoPageRoute(builder: (_) {
+        return const HistoryScreen();
       })
     );
   }

@@ -14,20 +14,24 @@ class HistoryListItem extends StatelessWidget {
     required this.subText,
     this.padding,
     required this.onTap,
-    required this.onDismissed
+    required this.onDismissed,
+    this.isDraggable = true
   });
   final SwipeActionController controller;
   final String title;
   final String subText;
   final EdgeInsets? padding;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final VoidCallback onDismissed;
+  final bool isDraggable;
 
   @override
   Widget build(BuildContext context) {
     return SwipeActionCell(
       key: UniqueKey(),
+      isDraggable: isDraggable,
       controller: controller,
+      backgroundColor: Colors.transparent,
       trailingActions: [
         SwipeAction(
             title: "削除",
@@ -45,7 +49,8 @@ class HistoryListItem extends StatelessWidget {
       ],
       child: SquishyButton(
         disableWidget: const SizedBox.shrink(),
-        onTap: () => onTap(),
+        onTap: () => onTap?.call(),
+        enabledAnimation: onTap != null,
         padding: EdgeInsets.zero,
         child: SizedBox(
           width: double.infinity,

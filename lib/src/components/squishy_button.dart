@@ -9,13 +9,15 @@ class SquishyButton extends StatefulWidget {
     required this.onTap,
     required this.child,
     required this.disableWidget,
-    this.padding = const EdgeInsets.all(8.0)
+    this.padding = const EdgeInsets.all(8.0),
+    this.enabledAnimation = true,
   }) : super(key: key);
 
   final Function? onTap;
   final Widget child;
   final Widget disableWidget;
   final EdgeInsets padding;
+  final bool enabledAnimation;
 
   @override
   State<SquishyButton> createState() => _SquishyButtonState();
@@ -31,6 +33,8 @@ class _SquishyButtonState extends State<SquishyButton> {
     if (widget.onTap == null) {
       return widget.disableWidget;
     }
+
+    if (widget.enabledAnimation == false) return widget.child;
 
     return GestureDetector(
         behavior: HitTestBehavior.opaque,

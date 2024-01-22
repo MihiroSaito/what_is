@@ -13,6 +13,7 @@ import 'package:what_is/src/utils/util.dart';
 
 import '../components/app_header.dart';
 import '../components/history_list_item.dart';
+import '../providers/web_pages_provider.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -40,18 +41,18 @@ class MainScreen extends StatelessWidget {
 
                           final copyText = useState<String?>(null);
 
-                          // ref.listen(appLifecycleProvider, (previous, next) {
-                          //   final pages = ref.read(webPagesProvider);
-                          //   if (next == AppLifecycleState.resumed && pages.isEmpty) {
-                          //     WidgetsBinding.instance.addPostFrameCallback((_) async {
-                          //       final value = await getClipboardText();
-                          //       if (value != null && copyText.value != value) {
-                          //         copyText.value = value;
-                          //         AppNavigator.toSearchView(ref, searchText: value);
-                          //       }
-                          //     });
-                          //   }
-                          // });
+                          ref.listen(appLifecycleProvider, (previous, next) {
+                            final pages = ref.read(webPagesProvider);
+                            if (next == AppLifecycleState.resumed && pages.isEmpty) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                                final value = await getClipboardText();
+                                if (value != null && copyText.value != value) {
+                                  copyText.value = value;
+                                  AppNavigator.toSearchView(ref, searchText: value);
+                                }
+                              });
+                            }
+                          });
 
                           final sampleHistory = useState([ //TODO: ちゃんとする。
                             (title: 'マイクロサービスアーキテクチャ', subText: '今日 - 23:20'),
@@ -119,7 +120,7 @@ class MainScreen extends StatelessWidget {
                                                   color: accentColor.withOpacity(0.1),
                                                   child: InkWell(
                                                     onTap: () {
-                                                      //TODO: 検索履歴へ
+                                                      AppNavigator().toHistoryScreen();
                                                     },
                                                     child: Padding(
                                                       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),

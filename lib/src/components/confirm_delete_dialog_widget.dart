@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:what_is/src/config/theme.dart';
 
 class ConfirmDeleteDialogWidget extends StatelessWidget {
-  const ConfirmDeleteDialogWidget({super.key});
+  const ConfirmDeleteDialogWidget({super.key, required this.title, required this.text});
+
+  final String title;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +30,18 @@ class ConfirmDeleteDialogWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                '紐づいている検索も完全に削除されます。',
-                style: TextStyle(
+              Text(
+                title,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 17.0,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8.0,),
-              const Text(
-                'この操作は元に戻せません。',
-                style: TextStyle(
+              Text(
+                text,
+                style: const TextStyle(
 
                 ),
                 textAlign: TextAlign.start,

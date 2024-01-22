@@ -46,7 +46,10 @@ class SearchTreeController {
         context: App.navigatorKey.currentContext!,
         useRootNavigator: true,
         builder: (_) {
-          return const ConfirmDeleteDialogWidget();
+          return const ConfirmDeleteDialogWidget(
+            title: '紐づいている検索も完全に削除されます。',
+            text: 'この操作は元に戻せません。',
+          );
         }
     ) ?? false;
   }

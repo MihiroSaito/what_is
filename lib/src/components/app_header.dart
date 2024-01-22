@@ -193,7 +193,8 @@ class AppHeader extends HookConsumerWidget {
                             topRight: Radius.circular(2.0),
                           ),
                           onTap: () {
-                            //TODO: 検索履歴を表示する。
+                            Navigator.pop(context);
+                            AppNavigator().toHistoryScreen();
                           }
                       ),
                       _line(context, bold: true),

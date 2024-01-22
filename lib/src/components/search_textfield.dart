@@ -61,7 +61,7 @@ class SearchTextField extends HookConsumerWidget {
                   ),
                   hintText: 'どんな言葉や概念を調べますか？',
                   hintStyle: TextStyle(
-                      color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.4)
+                      color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(0.4),
                   ),
                 ),
                 keyboardAppearance: AppTheme.isDarkMode()
