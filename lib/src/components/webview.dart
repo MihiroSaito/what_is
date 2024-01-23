@@ -6,6 +6,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:what_is/src/components/squishy_button.dart';
 import 'package:what_is/src/components/text_button.dart';
 import 'package:collection/collection.dart';
+import 'package:what_is/src/routing/navigator.dart';
 
 import '../config/theme.dart';
 import '../controllers/webview_controller.dart';
@@ -328,11 +329,11 @@ class GoogleSearchOption extends HookConsumerWidget {
           SquishyButton(
             disableWidget: const SizedBox.shrink(),
             onTap: () {
-              //TODO: カスタマイズできる。
+              AppNavigator().toSearchOptionSettingScreen();
             },
             child: Icon(
               Icons.settings,
-              color: Theme.of(context).iconTheme.color!.withOpacity(0.3),
+              color: Theme.of(context).iconTheme.color!.withOpacity(0.8),
             ),
           )
         ],

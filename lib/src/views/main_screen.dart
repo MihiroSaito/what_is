@@ -42,16 +42,16 @@ class MainScreen extends StatelessWidget {
                           final copyText = useState<String?>(null);
 
                           ref.listen(appLifecycleProvider, (previous, next) {
-                            final pages = ref.read(webPagesProvider);
-                            if (next == AppLifecycleState.resumed && pages.isEmpty) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) async {
-                                final value = await getClipboardText();
-                                if (value != null && copyText.value != value) {
-                                  copyText.value = value;
-                                  AppNavigator.toSearchView(ref, searchText: value);
-                                }
-                              });
-                            }
+                            if (next != AppLifecycleState.resumed) return;
+                            WidgetsBinding.instance.addPostFrameCallback((_) async {
+                              final value = await getClipboardText();
+                              if (value != null && copyText.value != value) {
+                                copyText.value = value;
+                                final pages = ref.read(webPagesProvider);
+                                if (pages.isNotEmpty) AppNavigator.popSearchView(ref);
+                                AppNavigator.toSearchView(ref, searchText: value);
+                              }
+                            });
                           });
 
                           final sampleHistory = useState([ //TODO: ちゃんとする。
@@ -88,12 +88,10 @@ class MainScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: isDarkMode
-                                            ? AppTheme.darkColor3
-                                            : Colors.white,
-                                    ),
+                                  ColoredBox(
+                                    color: isDarkMode
+                                        ? AppTheme.darkColor2.withOpacity(0.2)
+                                        : Colors.white,
                                     child: Padding(
                                       padding: const EdgeInsets.only(
                                           top: 24.0,

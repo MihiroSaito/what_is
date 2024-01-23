@@ -18,6 +18,7 @@ import '../providers/web_pages_provider.dart';
 import '../views/about_app_screen.dart';
 import '../components/search_view.dart';
 import '../views/history_screen.dart';
+import '../views/search_option_setting_screen.dart';
 
 
 class AppNavigator {
@@ -89,6 +90,15 @@ class AppNavigator {
       CupertinoPageRoute(builder: (_) {
         return const HistoryScreen();
       })
+    );
+  }
+
+
+  void toSearchOptionSettingScreen() {
+    App.navigatorKey.currentState!.push(
+        CupertinoPageRoute(builder: (_) {
+          return const SearchOptionSettingScreen();
+        })
     );
   }
 

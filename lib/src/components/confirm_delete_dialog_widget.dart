@@ -39,13 +39,14 @@ class ConfirmDeleteDialogWidget extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8.0,),
-              Text(
-                text,
-                style: const TextStyle(
+              if (text.isNotEmpty)
+                Text(
+                  text,
+                  style: const TextStyle(
 
+                  ),
+                  textAlign: TextAlign.start,
                 ),
-                textAlign: TextAlign.start,
-              ),
               const SizedBox(height: 16.0,),
               Row(
                 children: [
