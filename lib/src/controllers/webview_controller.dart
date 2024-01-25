@@ -115,6 +115,28 @@ class WebViewController {
   }
 
 
+
+  Future<void> removeElementAtTranslatedSiteIfNeeded({
+    required InAppWebViewController controller,
+    required WebUri currentUri
+  }) async {
+    if (!currentUri.toString().contains('.translate.goog')) return;
+    const String script = '''
+      var element = document.getElementById("gt-nvframe");
+      if (element) {
+        element.remove();
+      }
+
+      var elements = document.querySelectorAll("page-overview globalheader-dark");
+      elements.forEach(function(el) {
+        el.style.marginTop = "0px";
+      });
+    ''';
+    await controller.evaluateJavascript(source: script);
+  }
+
+
+
   /// 「さらに検索」機能の処理
   void immediatelySearch({
     required int currentTreeId,

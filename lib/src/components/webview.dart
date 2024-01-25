@@ -146,6 +146,8 @@ class AppWebView extends HookConsumerWidget {
                   isLoadingNotifier.state = false;
                   if (uri == null) return;
                   instance.translateIfNeeded(controller: controller, uri: uri);
+                  instance.removeElementAtTranslatedSiteIfNeeded(
+                      controller: controller, currentUri: currentUrl.value);
                 },
                 onReceivedError: (_, __, webResourceError) {
                   // リロードしまくったり素早くブラウザバックした時に起こるエラーは無視
